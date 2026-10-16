@@ -9,7 +9,8 @@
 //
 // Shadow DOM 이라 앱 CSS 와 섞이지 않는다. 앱 목록은 포털 저장소의 shared/apps.ts 를 빌드할 때 넣는다
 import favicon from '../public/favicon.svg?raw';
-import { APPS, currentApp, iconSvg } from '../shared/apps';
+import { APPS, appLogo, currentApp } from '../shared/apps';
+import { isPlainClick, showLoader } from '../shared/loader';
 
 const CSS = `
 :host { all: initial; font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
@@ -36,8 +37,8 @@ a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-rad
 a:hover, a:focus-visible { background: #f6f5fb; outline: none; }
 a.current { background: #f1efff; font-weight: 700; }
 a.soon { opacity: .45; pointer-events: none; }
-.ic { width: 32px; height: 32px; flex: none; border-radius: 50%; display: grid; place-items: center; }
-.ic svg { width: 18px; height: 18px; }
+.ic { width: 32px; height: 32px; flex: none; border-radius: 50%; display: grid; place-items: center; overflow: hidden; --px-ink: #1e1e1e; }
+.ic svg { width: var(--logo, 56%); height: auto; display: block; }
 .home .ic { background: #f6f5fb; color: #7b7f95; }
 .tag { margin-left: auto; font-size: 11px; color: #7b7f95; }
 .work { background: #efe9ff; color: #8b6cf6; }
@@ -56,6 +57,7 @@ a.soon { opacity: .45; pointer-events: none; }
   .project { background: #1d2f55; color: #8fb6ff; }
   .health { background: #183a2b; color: #6fd6a2; }
   .interest { background: #43281f; color: #ffa684; }
+  .ic { --px-ink: #a7b6bd; }
   .foot a { color: #ff7d90; }
 }
 `;
@@ -72,12 +74,12 @@ class AepSwitcher extends HTMLElement {
     const root = this.attachShadow({ mode: 'open' });
     const here = currentApp(location.pathname);
 
-    const items = APPS.map(
-      (a) =>
-        `<a href="${a.path}" class="${a === here ? 'current' : ''} ${a.ready ? '' : 'soon'}" ${a.ready ? '' : 'aria-disabled="true" tabindex="-1"'}>
-          <span class="ic ${a.tone}">${iconSvg(a.tone)}</span>${a.name}${a.ready ? '' : '<span class="tag">준비 중</span>'}
-        </a>`,
-    ).join('');
+    const items = APPS.map((a) => {
+      const logo = appLogo(a);
+      return `<a href="${a.path}" data-app="${a.id}" class="${a === here ? 'current' : ''} ${a.ready ? '' : 'soon'}" ${a.ready ? '' : 'aria-disabled="true" tabindex="-1"'}>
+          <span class="ic ${a.tone}" style="--logo:${logo.size}">${logo.html}</span>${a.name}${a.ready ? '' : '<span class="tag">준비 중</span>'}
+        </a>`;
+    }).join('');
 
     root.innerHTML = `<style>${CSS}</style>
       <button class="btn" part="button" aria-haspopup="true" aria-expanded="false" aria-label="앱 전환">${favicon}</button>
@@ -91,6 +93,15 @@ class AepSwitcher extends HTMLElement {
     this.button = root.querySelector('.btn')!;
     this.panel = root.querySelector('.panel')!;
     this.button.addEventListener('click', () => this.toggle());
+    // 다른 화면으로 넘어갈 때 로딩 화면으로 덮는다 (홈·로그아웃은 ae 만)
+    this.panel.addEventListener('click', (e) => {
+      const link = (e.target as Element).closest('a');
+      if (!link || !isPlainClick(e)) return;
+      this.toggle(false);
+      // 지금 보고 있는 바로 그 주소면 다시 불러오지 않는다
+      if (link.href === location.href) return e.preventDefault();
+      showLoader(APPS.find((a) => a.id === link.dataset.app));
+    });
     this.place();
   }
 

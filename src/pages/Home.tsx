@@ -1,4 +1,5 @@
-import { APPS, iconSvg, TONE_LABEL, type PortalApp } from '../../shared/apps';
+import { APPS, appLogo, TONE_LABEL, type PortalApp } from '../../shared/apps';
+import { isPlainClick, showLoader } from '../../shared/loader';
 import { Backdrop, Brand } from '../components/Brand';
 import { UserMenu } from '../components/UserMenu';
 
@@ -14,11 +15,9 @@ export function Home() {
       <main className="home">
         <section className="hero">
           <h1>
-            All your life,
-            <br />
-            in one log.
+            t[A]k[E] c[A]r[E] yourself.
           </h1>
-          <p>일도, 운동도, 프로젝트도, 관심사도. 모두 한곳에서.</p>
+          <p>일도, 운동도, 관심사도. 모두 한곳에서.</p>
         </section>
         <ul className="app-grid">
           {APPS.map((app) => (
@@ -33,9 +32,14 @@ export function Home() {
 }
 
 function AppCard({ app }: { app: PortalApp }) {
+  const logo = appLogo(app);
   const body = (
     <>
-      <span className={`app-icon tone-${app.tone}`} dangerouslySetInnerHTML={{ __html: iconSvg(app.tone) }} />
+      <span
+        className={`app-icon tone-${app.tone}`}
+        style={{ ['--logo' as string]: logo.size }}
+        dangerouslySetInnerHTML={{ __html: logo.html }}
+      />
       <span className="app-text">
         <strong>{app.name}</strong>
         <span className="app-desc">{app.desc}</span>
@@ -45,7 +49,7 @@ function AppCard({ app }: { app: PortalApp }) {
   );
   // 다른 앱은 다른 빌드라 라우터 링크가 아니라 페이지 이동
   return app.ready ? (
-    <a className="app-card" href={app.path}>
+    <a className="app-card" href={app.path} onClick={(e) => isPlainClick(e.nativeEvent) && showLoader(app)}>
       {body}
     </a>
   ) : (

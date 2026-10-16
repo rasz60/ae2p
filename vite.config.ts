@@ -2,6 +2,7 @@ import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { APPS } from './shared/apps.ts';
+import { LOADER_CSS, loaderHtml } from './shared/loader.ts';
 
 // 같은 도메인의 다른 앱 경로. 포털 서비스워커가 이 주소들을 가로채 포털 index.html 을 띄우면 안 된다
 const appPaths = APPS.map((a) => a.path.replace(/\//g, '\/'));
@@ -14,6 +15,14 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    // 첫 화면: JS 가 뜨기 전까지 로딩 화면 (React 가 #root 를 그리면 사라진다)
+    {
+      name: 'aep-splash',
+      transformIndexHtml: (html) =>
+        html
+          .replace('</head>', `<style>${LOADER_CSS}</style></head>`)
+          .replace('<div id="root"></div>', `<div id="root">${loaderHtml()}</div>`),
+    },
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon-180x180.png', 'brand/*.svg'],

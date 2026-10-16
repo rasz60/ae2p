@@ -23,6 +23,7 @@
   --interest: #f07a4e; --interest-bg: #fdeae2;
 
   --radius: 20px;
+  --px-ink: #1e1e1e; /* 픽셀 로고(업무일지·에이전트)의 외곽선 */
   --font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
   color-scheme: light;
 }
@@ -43,6 +44,7 @@
     --danger: #ff7d90;
     --ok: #6fd6a2;
     --shadow: 0 10px 30px -12px rgb(0 0 0 / 0.6);
+    --px-ink: #a7b6bd;
 
     --work-bg: #2d2652;
     --project-bg: #1d2f55;
@@ -174,7 +176,8 @@ input[readonly] { color: var(--muted); }
 a.app-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px -14px rgb(90 80 200 / .35); }
 a.app-card:active { transform: scale(.98); }
 .app-card.is-soon { opacity: .6; box-shadow: none; }
-.app-icon { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; }
+.app-icon { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; overflow: hidden; }
+.app-icon svg { width: var(--logo, 46%); height: auto; display: block; }
 .app-text { display: flex; flex-direction: column; gap: 2px; }
 .app-text strong { font-size: 17px; }
 .app-desc { color: var(--muted); font-size: 14px; }
