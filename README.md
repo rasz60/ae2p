@@ -10,7 +10,7 @@
 | `/` | 포털: 로그인 · 초대 · 앱 런처 · 앱 전환 버튼 · PWA | `rasz60/ae2p` (여기) |
 | `/diary/` | 업무일지++ | `kingtepad` |
 | `/agent/` | 에이전트 (잡 모니터 · 잡 요청) | 분리 예정 |
-| `/workout/` | 운동기록 | `rasz60/work-doubt` |
+| `/workout/` | 운동기록 | `rasz60/work-doubt` (Go API :8091) |
 | `/career/` | 커리어++ | `careerpad` (예정) |
 
 ## 구조
@@ -115,5 +115,5 @@ kingtepad 와 같은 서버·같은 방식(Caddy + pm2 + GitHub Actions)입니�
 2. ~~도메인 이전: DuckDNS `ae2p` + Caddy + Supabase URL 설정~~ (구글·카카오 OAuth 는 ID 발급 후)
 3. ~~kingtepad → `/diary/`~~ (자체 로그인·PWA·푸시를 포털로). 에이전트 모니터는 분리 전까지 `/diary/monitor`
 4. 에이전트 저장소 분리 + 잡 요청 게시판
-5. work-doubt → Supabase Auth 검증 + `workout` 스키마 + `/workout/`
+5. ~~work-doubt → Supabase Auth 검증 + `workout` 스키마 + `/workout/`~~
 6. careerpad

@@ -72,7 +72,7 @@ export const APPS: PortalApp[] = [
     logo: { svg: MONITOR, size: 56 },
   },
   {
-    id: 'workout', name: '운동기록', desc: '체성분 · 운동 · AI 코치', path: '/workout/', tone: 'health', ready: false,
+    id: 'workout', name: '운동기록', desc: '체성분 · 운동 · AI 코치', path: '/workout/', tone: 'health', ready: true,
     logo: { svg: TREND, size: 100 },
   },
   { id: 'career', name: '커리어++', desc: '경력 · 목표 관리', path: '/career/', tone: 'interest', ready: false },

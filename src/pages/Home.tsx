@@ -15,7 +15,7 @@ export function Home() {
       <main className="home">
         <section className="hero">
           <h1>
-            t[A]k[E] c[A]r[E] yourself.
+            t[A]k[E] c[A]r[E].
           </h1>
           <p>일도, 운동도, 관심사도. 모두 한곳에서.</p>
         </section>

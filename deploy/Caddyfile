@@ -22,7 +22,21 @@ ae2p.duckdns.org {
 		file_server
 	}
 
-	# ── 운동기록 (work-doubt) · 커리어 · 에이전트 ── 앱을 올릴 때 위와 같은 모양으로 추가
+	# ── 운동기록 (work-doubt, pm2: workout-api) ── Expo 웹은 baseUrl '/workout' 으로 빌드된다
+	redir /workout /workout/
+	handle_path /api/workout/* {
+		# AI 코치 답변(SSE)을 버퍼링 없이 바로 흘려보낸다
+		reverse_proxy 127.0.0.1:8091 {
+			flush_interval -1
+		}
+	}
+	handle_path /workout/* {
+		root * /home/ubuntu/work-doubt/app/dist
+		try_files {path} /index.html
+		file_server
+	}
+
+	# ── 커리어 · 에이전트 ── 앱을 올릴 때 위와 같은 모양으로 추가
 
 	# ── 포털 (나머지 전부) ──
 	handle {
