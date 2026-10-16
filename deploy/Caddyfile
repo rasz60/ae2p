@@ -1,0 +1,40 @@
+# /etc/caddy/Caddyfile — ae2p.duckdns.org 한 도메인에 포털과 모든 앱을 경로로 나눠 올린다.
+# 바꾼 뒤: sudo caddy validate --config /etc/caddy/Caddyfile && sudo systemctl reload caddy
+# Caddy 사용자가 각 dist 폴더를 읽을 수 있어야 한다 (예: chmod o+x /home/ubuntu)
+
+ae2p.duckdns.org {
+	encode zstd gzip
+
+	# ── 포털 API (초대·계정 관리, pm2: ae2p-portal-api) ──
+	handle_path /api/portal/* {
+		reverse_proxy 127.0.0.1:8090
+	}
+
+	# ── 업무일지 (kingtepad) ── 3단계(kingtepad 를 /diary/ 로 옮기기) 뒤에 주석을 푼다
+	# redir /diary /diary/
+	# handle_path /api/diary/* {
+	# 	reverse_proxy 127.0.0.1:8080
+	# }
+	# handle_path /diary/* {
+	# 	root * /home/ubuntu/kingtepad/apps/web/dist
+	# 	try_files {path} /index.html
+	# 	file_server
+	# }
+
+	# ── 운동기록 (work-doubt) · 커리어 · 에이전트 ── 앱을 올릴 때 위와 같은 모양으로 추가
+
+	# ── 포털 (나머지 전부) ──
+	handle {
+		root * /home/ubuntu/ae2p/dist
+		# 서비스워커와 switcher.js 는 이름이 고정이라 항상 새로 받게 한다
+		@nocache path /sw.js /registerSW.js /manifest.webmanifest /shell/*
+		header @nocache Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+# 예전 주소. 3단계 전까지는 지금 kingtepad 설정을 그대로 두고, 옮긴 뒤 아래로 바꾼다
+# kingtepad.duckdns.org {
+# 	redir https://ae2p.duckdns.org/diary{uri} permanent
+# }

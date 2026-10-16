@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -6 300 160">
+<defs>
+  <linearGradient id="grad" gradientUnits="userSpaceOnUse" x1="10" y1="20" x2="197" y2="100">
+    <stop offset="0" stop-color="#4E8BFF"/>
+    <stop offset=".45" stop-color="#7A82FF"/>
+    <stop offset=".78" stop-color="#B06EF8"/>
+    <stop offset="1" stop-color="#D47CF2"/>
+  </linearGradient>
+  <filter id="puff" filterUnits="userSpaceOnUse" x="-40" y="-40" width="400" height="240" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="b"/>
+    <feOffset in="b" dx="-3" dy="-6" result="o1"/>
+    <feComposite in="SourceAlpha" in2="o1" operator="out" result="rimBR"/>
+    <feFlood flood-color="#4B2FC9" flood-opacity="0.4"/>
+    <feComposite in2="rimBR" operator="in" result="shade"/>
+    <feOffset in="b" dx="3" dy="6" result="o2"/>
+    <feComposite in="SourceAlpha" in2="o2" operator="out" result="rimTL"/>
+    <feFlood flood-color="#FFFFFF" flood-opacity="0.6"/>
+    <feComposite in2="rimTL" operator="in" result="hi"/>
+    <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="shade"/><feMergeNode in="hi"/></feMerge>
+  </filter>
+  <filter id="overlap" filterUnits="userSpaceOnUse" x="-40" y="-40" width="400" height="240" color-interpolation-filters="sRGB">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+    <feOffset dx="-4" dy="3" result="s"/>
+    <feFlood flood-color="#2E2394" flood-opacity=".35"/>
+    <feComposite in2="s" operator="in"/>
+    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="drop" filterUnits="userSpaceOnUse" x="-40" y="-40" width="400" height="240" color-interpolation-filters="sRGB">
+    <feDropShadow dx="0" dy="7" stdDeviation="6" flood-color="#6A5CFF" flood-opacity="0.28"/>
+  </filter>
+</defs>
+<g filter="url(#drop)">
+  <g fill="none" stroke="url(#grad)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 60a36 36 0 1 0 72 0a36 36 0 1 0 -72 0M96 42V96" filter="url(#puff)"/>
+    <g filter="url(#overlap)"><path d="M111 60H183A36 36 0 1 0 163.9 91.79" filter="url(#puff)"/></g>
+  </g>
+  <g fill="#434859"><circle cx="212" cy="46" r="8.5"/><circle cx="212" cy="82" r="8.5"/></g>
+  <path d="M237 66a22 22 0 1 0 44 0a22 22 0 1 0 -44 0M237 44V128" fill="none" stroke="#434859" stroke-width="16" stroke-linecap="round"/>
+</g></svg>
