@@ -40,6 +40,16 @@ export default defineConfig({
         navigateFallbackDenylist: notPortal,
         // shell/switcher.js 는 고정 이름이라 프리캐시하면 앱들이 옛 버전을 받는다
         globIgnores: ['shell/**'],
+        // 웹 푸시 수신 (public/push-sw.js). 도메인 전체 앱의 푸시를 이 서비스워커가 받는다
+        importScripts: ['push-sw.js'],
+        // 폰트(포털 Pretendard, 업무일지 Galmuri 등)는 처음 쓸 때 캐시
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.destination === 'font',
+            handler: 'CacheFirst',
+            options: { cacheName: 'fonts', expiration: { maxEntries: 60 } },
+          },
+        ],
       },
     }),
   ],

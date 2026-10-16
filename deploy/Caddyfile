@@ -11,16 +11,16 @@ ae2p.duckdns.org {
 		reverse_proxy 127.0.0.1:8090
 	}
 
-	# ── 업무일지 (kingtepad) ── 3단계(kingtepad 를 /diary/ 로 옮기기) 뒤에 주석을 푼다
-	# redir /diary /diary/
-	# handle_path /api/diary/* {
-	# 	reverse_proxy 127.0.0.1:8080
-	# }
-	# handle_path /diary/* {
-	# 	root * /home/ubuntu/kingtepad/apps/web/dist
-	# 	try_files {path} /index.html
-	# 	file_server
-	# }
+	# ── 업무일지 (kingtepad, pm2: kingtepad-api) ── 웹은 base '/diary/' 로 빌드된다
+	redir /diary /diary/
+	handle_path /api/diary/* {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle_path /diary/* {
+		root * /home/ubuntu/kingtepad/apps/web/dist
+		try_files {path} /index.html
+		file_server
+	}
 
 	# ── 운동기록 (work-doubt) · 커리어 · 에이전트 ── 앱을 올릴 때 위와 같은 모양으로 추가
 
@@ -28,32 +28,19 @@ ae2p.duckdns.org {
 	handle {
 		root * /home/ubuntu/ae2p/dist
 		# 서비스워커와 switcher.js 는 이름이 고정이라 항상 새로 받게 한다
-		@nocache path /sw.js /registerSW.js /manifest.webmanifest /shell/*
+		@nocache path /sw.js /registerSW.js /push-sw.js /manifest.webmanifest /shell/*
 		header @nocache Cache-Control "no-cache"
 		try_files {path} /index.html
 		file_server
 	}
 }
 
-# ── 업무일지 예전 주소 ──
-# 지금(3단계 전): 업무일지는 예전 주소에서 그대로 운영한다. 이 두 블록을 지우거나 주석 처리하면 업무일지가 꺼진다
-kingtepad.duckdns.org {
-	encode gzip
-	handle_path /api/* {
-		reverse_proxy 127.0.0.1:8080
-	}
-	handle {
-		root * /home/ubuntu/kingtepad/apps/web/dist
-		try_files {path} /index.html
-		file_server
-	}
-}
-
-kingtepad.duckdns.org:8443 {
+# 에이전트 모니터의 픽셀 오피스 (kingtepad-api 의 오피스 프록시)
+ae2p.duckdns.org:8443 {
 	reverse_proxy 127.0.0.1:8081
 }
 
-# 3단계(업무일지를 /diary/ 로 옮김)가 끝난 뒤에만: 위 kingtepad.duckdns.org 블록을 지우고 이것으로 바꾼다
-# kingtepad.duckdns.org {
-# 	redir https://ae2p.duckdns.org/diary{uri} permanent
-# }
+# 예전 업무일지 주소 → 새 주소로 (/tasks/… → /diary/tasks/…)
+kingtepad.duckdns.org {
+	redir https://ae2p.duckdns.org/diary{uri} permanent
+}

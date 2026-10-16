@@ -1,3 +1,4 @@
+import './lib/install'; // 설치 이벤트(beforeinstallprompt)는 페이지 로드 직후 한 번 오므로 가장 먼저 받아 둔다
 import { StrictMode, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';

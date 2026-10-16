@@ -7,7 +7,7 @@ export interface PortalApp {
   id: string;
   name: string;
   desc: string;
-  /** 같은 도메인의 하위 경로. 끝에 / */
+  /** 같은 도메인의 하위 경로 (앱 루트면 끝에 /) */
   path: string;
   tone: AppTone;
   /** false 면 '준비 중'으로 보이고 누를 수 없다 */
@@ -16,7 +16,8 @@ export interface PortalApp {
 
 export const APPS: PortalApp[] = [
   { id: 'diary', name: '업무일지++', desc: '업무 · 일지 · 캘린더', path: '/diary/', tone: 'work', ready: true },
-  { id: 'agent', name: '에이전트', desc: '잡 모니터 · 잡 요청', path: '/agent/', tone: 'project', ready: false },
+  // 별도 저장소로 떼어 내기 전까지는 업무일지 안의 모니터 화면 (떼어 내면 /agent/)
+  { id: 'agent', name: '에이전트', desc: '잡 모니터 · 잡 요청', path: '/diary/monitor', tone: 'project', ready: true },
   { id: 'workout', name: '운동기록', desc: '체성분 · 운동 · AI 코치', path: '/workout/', tone: 'health', ready: false },
   { id: 'career', name: '커리어++', desc: '경력 · 목표 관리', path: '/career/', tone: 'interest', ready: false },
 ];
@@ -34,5 +35,6 @@ export const TONE_LABEL: Record<AppTone, string> = { work: 'Work', project: 'Pro
 export const iconSvg = (tone: AppTone) =>
   `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TONE_ICON[tone]}</svg>`;
 
-/** 지금 주소가 어느 앱인지 */
-export const currentApp = (pathname: string) => APPS.find((a) => pathname.startsWith(a.path));
+/** 지금 주소가 어느 앱인지 (/diary/monitor 처럼 겹치면 더 긴 경로가 이긴다) */
+export const currentApp = (pathname: string) =>
+  APPS.filter((a) => pathname.startsWith(a.path)).sort((a, b) => b.path.length - a.path.length)[0];

@@ -112,8 +112,8 @@ kingtepad 와 같은 서버·같은 방식(Caddy + pm2 + GitHub Actions)입니�
 ## 진행 순서
 
 1. ~~포털 뼈대~~ (이 저장소)
-2. 도메인 이전: DuckDNS `ae2p` + Caddy + Supabase URL/OAuth 설정
-3. kingtepad → `/diary/` (자체 로그인·PWA·푸시를 포털로, 업무일지 안 홈/상위 탭 제거)
+2. ~~도메인 이전: DuckDNS `ae2p` + Caddy + Supabase URL 설정~~ (구글·카카오 OAuth 는 ID 발급 후)
+3. ~~kingtepad → `/diary/`~~ (자체 로그인·PWA·푸시를 포털로). 에이전트 모니터는 분리 전까지 `/diary/monitor`
 4. 에이전트 저장소 분리 + 잡 요청 게시판
 5. work-doubt → Supabase Auth 검증 + `workout` 스키마 + `/workout/`
 6. careerpad
