@@ -76,8 +76,17 @@ kingtepad 와 같은 서버·같은 방식(Caddy + pm2 + GitHub Actions)입니�
 3. **`.env`**: `.env.example` 참고. `SUPABASE_SERVICE_ROLE_KEY` 는 서버 `.env` 에만
 4. **빌드 · 실행**: `npm ci && npm run build && pm2 start ecosystem.config.cjs && pm2 save`
 5. **Caddy**: [deploy/Caddyfile](deploy/Caddyfile) 의 `ae2p.duckdns.org` 블록을 `/etc/caddy/Caddyfile` 에 추가 → `sudo systemctl reload caddy`
-6. **자동 배포**: GitHub Secrets 에 `DEPLOY_HOST`(ae2p.duckdns.org) · `DEPLOY_USER` · `DEPLOY_SSH_KEY` · `DEPLOY_KNOWN_HOSTS`.
-   배포 키는 kingtepad 것과 따로 만들고, `authorized_keys` 에서 `command="bash ~/ae2p/scripts/deploy.sh"` 로 묶는다
+6. **자동 배포 (GitHub Actions)**: `main` 에 push → 타입체크 → 서버에 SSH 로 접속해 [scripts/deploy.sh](scripts/deploy.sh) 실행.
+   kingtepad 와 같은 방식이고, 키는 kingtepad 것과 따로 만든다. 최초 1회:
+   ```bash
+   # (서버) Actions 전용 키를 만들고, 이 키로는 ae2p 의 deploy.sh 만 실행되게 묶는다
+   ssh-keygen -t ed25519 -C "github-actions-ae2p" -f ~/.ssh/gha_ae2p -N ""
+   echo "command=\"bash $HOME/ae2p/scripts/deploy.sh\",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty $(cat ~/.ssh/gha_ae2p.pub)" >> ~/.ssh/authorized_keys
+   cat ~/.ssh/gha_ae2p              # → Secret DEPLOY_SSH_KEY 에 붙여 넣고, 서버의 이 파일은 지운다
+   ssh-keyscan -t ed25519 localhost | sed 's/^localhost/ae2p.duckdns.org/'   # → Secret DEPLOY_KNOWN_HOSTS
+   ```
+   GitHub 저장소 → Settings → Secrets and variables → Actions 에 `DEPLOY_HOST`(ae2p.duckdns.org), `DEPLOY_USER`(ubuntu),
+   `DEPLOY_SSH_KEY`, `DEPLOY_KNOWN_HOSTS` 를 넣는다. 진행 상황은 저장소 **Actions** 탭, 수동 실행은 Actions → deploy → Run workflow
 
 ## 앱을 포털에 붙이는 법
 

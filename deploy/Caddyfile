@@ -1,4 +1,5 @@
 # /etc/caddy/Caddyfile — ae2p.duckdns.org 한 도메인에 포털과 모든 앱을 경로로 나눠 올린다.
+# 이 파일 전체로 /etc/caddy/Caddyfile 을 바꾼다 (설치 때 들어 있는 ':80 { root * /usr/share/caddy … }' 예시 블록은 지운다)
 # 바꾼 뒤: sudo caddy validate --config /etc/caddy/Caddyfile && sudo systemctl reload caddy
 # Caddy 사용자가 각 dist 폴더를 읽을 수 있어야 한다 (예: chmod o+x /home/ubuntu)
 
@@ -34,7 +35,25 @@ ae2p.duckdns.org {
 	}
 }
 
-# 예전 주소. 3단계 전까지는 지금 kingtepad 설정을 그대로 두고, 옮긴 뒤 아래로 바꾼다
+# ── 업무일지 예전 주소 ──
+# 지금(3단계 전): 업무일지는 예전 주소에서 그대로 운영한다. 이 두 블록을 지우거나 주석 처리하면 업무일지가 꺼진다
+kingtepad.duckdns.org {
+	encode gzip
+	handle_path /api/* {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle {
+		root * /home/ubuntu/kingtepad/apps/web/dist
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+kingtepad.duckdns.org:8443 {
+	reverse_proxy 127.0.0.1:8081
+}
+
+# 3단계(업무일지를 /diary/ 로 옮김)가 끝난 뒤에만: 위 kingtepad.duckdns.org 블록을 지우고 이것으로 바꾼다
 # kingtepad.duckdns.org {
 # 	redir https://ae2p.duckdns.org/diary{uri} permanent
 # }
