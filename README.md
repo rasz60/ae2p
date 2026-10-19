@@ -11,7 +11,7 @@
 | `/diary/` | 업무일지++ | `kingtepad` |
 | `/agent/` | 에이전트 (잡 모니터 · 잡 요청) | 분리 예정 |
 | `/workout/` | 운동기록 | `rasz60/work-doubt` (Go API :8091) |
-| `/career/` | 커리어++ | `careerpad` (예정) |
+| `/career/` | 커리어++ (공개 이력서 · 프로젝트 · 채용공고 · 연락) | `careerpad` (Go API :8092) |
 
 ## 구조
 
@@ -105,7 +105,8 @@ kingtepad 와 같은 서버·같은 방식(Caddy + pm2 + GitHub Actions)입니�
    <script type="module" src="/shell/switcher.js"></script>
    ```
    기본은 오른쪽 아래 떠 있는 버튼. 하단 탭이 있는 앱은 `<aep-switcher position="top-left">` 처럼 위치를 정하거나,
-   툴바 안에 `<aep-switcher mode="inline">` 로 넣는다 (React 로 그릴 땐 `<meta name="aep-switcher" content="manual">` 로 자동 삽입을 끈다)
+   툴바 안에 `<aep-switcher mode="inline">` 로 넣는다 (React 로 그릴 땐 `<meta name="aep-switcher" content="manual">` 로 자동 삽입을 끈다).
+   inline 버튼 크기는 CSS 변수로: `aep-switcher { --aep-switcher-size: 28px; }`
 5. **PWA · 푸시 끄기**: 서비스워커는 포털 것 하나만. 앱의 manifest·서비스워커·푸시 구독은 지운다
 6. **포털 목록 갱신**: 이 저장소 `shared/apps.ts` 에서 그 앱을 `ready: true` 로 → 배포
 
@@ -116,4 +117,4 @@ kingtepad 와 같은 서버·같은 방식(Caddy + pm2 + GitHub Actions)입니�
 3. ~~kingtepad → `/diary/`~~ (자체 로그인·PWA·푸시를 포털로). 에이전트 모니터는 분리 전까지 `/diary/monitor`
 4. 에이전트 저장소 분리 + 잡 요청 게시판
 5. ~~work-doubt → Supabase Auth 검증 + `workout` 스키마 + `/workout/`~~
-6. careerpad
+6. ~~careerpad → `/career/`~~ (공개 페이지는 로그인 없이 `/career/<slug>`)

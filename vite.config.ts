@@ -4,9 +4,10 @@ import { VitePWA } from 'vite-plugin-pwa';
 import { APPS } from './shared/apps.ts';
 import { LOADER_CSS, loaderHtml } from './shared/loader.ts';
 
-// 같은 도메인의 다른 앱 경로. 포털 서비스워커가 이 주소들을 가로채 포털 index.html 을 띄우면 안 된다
-const appPaths = APPS.map((a) => a.path.replace(/\//g, '\/'));
-const notPortal = [new RegExp(`^(${appPaths.join('|')}|\/api\/|\/shell\/)`)];
+// 같은 도메인의 다른 앱 경로. 포털 서비스워커가 이 주소들을 가로채 포털 index.html 을 띄우면 안 된다.
+// 끝 / 가 없는 앱 루트(/workout)도 막는다 — 안 막으면 새로고침 때 포털이 떠서 홈으로 튕긴다
+const appRoots = [...new Set(APPS.map((a) => a.path.replace(/\/$/, '')))];
+const notPortal = [new RegExp(`^(?:${[...appRoots, '/api', '/shell'].join('|')})(?:[/?]|$)`)];
 
 export default defineConfig({
   server: {

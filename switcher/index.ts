@@ -5,7 +5,7 @@
 // 태그가 없으면 오른쪽 아래에 떠 있는 버튼을 자동으로 붙인다 (끄기: <meta name="aep-switcher" content="manual">).
 // 위치를 정하려면 직접 넣는다:
 //   <aep-switcher position="top-left" offset="12"></aep-switcher>   떠 있는 버튼 (모서리 + 간격 px)
-//   <aep-switcher mode="inline"></aep-switcher>                      앱 툴바 안에 그냥 놓이는 버튼
+//   <aep-switcher mode="inline"></aep-switcher>                      앱 툴바 안에 그냥 놓이는 버튼 (크기: CSS --aep-switcher-size)
 //
 // Shadow DOM 이라 앱 CSS 와 섞이지 않는다. 앱 목록은 포털 저장소의 shared/apps.ts 를 빌드할 때 넣는다
 import favicon from '../public/favicon.svg?raw';
@@ -21,11 +21,16 @@ const CSS = `
   background: #fff; box-shadow: 0 8px 22px -10px rgb(90 80 200 / .55); cursor: pointer;
   display: grid; place-items: center; transition: transform .12s;
 }
-:host([mode='inline']) .btn { width: 36px; height: 36px; padding: 5px; box-shadow: none; }
+/* 툴바 안 버튼 크기는 앱이 정한다: aep-switcher { --aep-switcher-size: 28px } (사용자 정의 속성은 all: initial 에도 상속된다) */
+:host([mode='inline']) .btn {
+  width: var(--aep-switcher-size, 36px); height: var(--aep-switcher-size, 36px);
+  padding: calc(var(--aep-switcher-size, 36px) * .14); box-shadow: none;
+}
 .btn:active { transform: scale(.94); }
 .btn svg { width: 100%; height: 100%; }
+/* inline 모드는 호스트에 z-index 가 없어서, 패널에 직접 주지 않으면 뒤에 오는 앱 요소(position: relative 인 탭 등)가 패널 위에 그려진다 */
 .panel {
-  position: fixed; width: 264px; padding: 8px;
+  position: fixed; z-index: 2147483000; width: 264px; padding: 8px;
   background: #fff; color: #2e3142; border: 1px solid #ebe9f4; border-radius: 18px;
   box-shadow: 0 18px 40px -14px rgb(60 50 160 / .45);
   font-size: 14px; line-height: 1.4;

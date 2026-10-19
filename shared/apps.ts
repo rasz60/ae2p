@@ -60,6 +60,11 @@ const MONITOR = pixelSvg([
 const TREND =
   '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#0b0b0b"/>' +
   '<polyline points="5.5,15.5 9.5,11.5 12.5,14 17,8.5 18.8,10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+// 커리어++(careerpad): 이력서 한 장 + '+' (앱의 주황 포인트색)
+const RESUME =
+  '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2.5" width="16" height="19" rx="2.5" fill="#fff" stroke="#f07a4e" stroke-width="1.8"/>' +
+  '<circle cx="9" cy="8.5" r="2.3" fill="#f07a4e"/>' +
+  '<path d="M7.5 14.5h9M7.5 17.5h5.5M14 8.5h3.6M15.8 6.7v3.6" fill="none" stroke="#f07a4e" stroke-width="1.7" stroke-linecap="round"/></svg>';
 
 export const APPS: PortalApp[] = [
   {
@@ -75,7 +80,10 @@ export const APPS: PortalApp[] = [
     id: 'workout', name: '운동기록', desc: '체성분 · 운동 · AI 코치', path: '/workout/', tone: 'health', ready: true,
     logo: { svg: TREND, size: 100 },
   },
-  { id: 'career', name: '커리어++', desc: '경력 · 목표 관리', path: '/career/', tone: 'interest', ready: false },
+  {
+    id: 'career', name: '커리어++', desc: '이력 · 프로젝트 · 채용공고', path: '/career/', tone: 'interest', ready: true,
+    logo: { svg: RESUME, size: 60 },
+  },
 ];
 
 /** 축별 아이콘 (24×24, 선 2px). 로고가 없는 앱에 쓴다 */
@@ -97,6 +105,12 @@ export const appLogo = (app: PortalApp) => ({
   size: `${app.logo?.size ?? 46}%`,
 });
 
+/** 앱 경로에 들어가는 주소인지. 끝 / 가 없는 앱 루트(/workout, /workout?x=1)도 그 앱이다 */
+const isUnder = (pathname: string, appPath: string) => {
+  const root = appPath.replace(/\/$/, '');
+  return pathname === root || pathname.startsWith(`${root}/`) || pathname.startsWith(`${root}?`);
+};
+
 /** 지금 주소가 어느 앱인지 (/diary/monitor 처럼 겹치면 더 긴 경로가 이긴다) */
 export const currentApp = (pathname: string) =>
-  APPS.filter((a) => pathname.startsWith(a.path)).sort((a, b) => b.path.length - a.path.length)[0];
+  APPS.filter((a) => isUnder(pathname, a.path)).sort((a, b) => b.path.length - a.path.length)[0];
