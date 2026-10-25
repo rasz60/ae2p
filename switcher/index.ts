@@ -27,6 +27,7 @@ const CSS = `
   padding: calc(var(--aep-switcher-size, 36px) * .14); box-shadow: none;
 }
 .btn:active { transform: scale(.94); }
+.btn:focus-visible { outline: 2px solid #6a5ff0; outline-offset: 2px; }
 .btn svg { width: 100%; height: 100%; }
 /* inline 모드는 호스트에 z-index 가 없어서, 패널에 직접 주지 않으면 뒤에 오는 앱 요소(position: relative 인 탭 등)가 패널 위에 그려진다 */
 .panel {
@@ -36,7 +37,7 @@ const CSS = `
   font-size: 14px; line-height: 1.4;
 }
 .panel[hidden] { display: none; }
-.head { display: flex; align-items: center; gap: 8px; padding: 8px 10px 10px; color: #7b7f95; font-size: 12px; border-bottom: 1px solid #ebe9f4; margin-bottom: 4px; }
+.head { display: flex; align-items: center; gap: 8px; padding: 8px 10px 10px; color: #5d6177; font-size: 12px; border-bottom: 1px solid #ebe9f4; margin-bottom: 4px; }
 .head svg { width: 26px; height: 26px; }
 a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 12px; color: inherit; text-decoration: none; }
 a:hover, a:focus-visible { background: #f6f5fb; outline: none; }
@@ -44,18 +45,19 @@ a.current { background: #f1efff; font-weight: 700; }
 a.soon { opacity: .45; pointer-events: none; }
 .ic { width: 32px; height: 32px; flex: none; border-radius: 50%; display: grid; place-items: center; overflow: hidden; --px-ink: #1e1e1e; }
 .ic svg { width: var(--logo, 56%); height: auto; display: block; }
-.home .ic { background: #f6f5fb; color: #7b7f95; }
-.tag { margin-left: auto; font-size: 11px; color: #7b7f95; }
+.home .ic { background: #f6f5fb; color: #5d6177; }
+.tag { margin-left: auto; font-size: 12px; color: #5d6177; }
 .work { background: #efe9ff; color: #8b6cf6; }
 .project { background: #e3eeff; color: #4e8bff; }
 .health { background: #e0f5ea; color: #2faf6b; }
 .interest { background: #fdeae2; color: #f07a4e; }
 .foot { border-top: 1px solid #ebe9f4; margin-top: 4px; padding-top: 4px; }
-.foot a { color: #e0475f; font-size: 13px; }
+.foot a { color: #c8344d; font-size: 13px; }
 @media (prefers-color-scheme: dark) {
   .btn { background: #1f2038; border-color: #2e3050; }
   .panel { background: #1f2038; color: #ecebfa; border-color: #2e3050; }
   .head, .foot { border-color: #2e3050; }
+  .head, .tag, .home .ic { color: #a3a5c2; }
   a:hover, a:focus-visible, .home .ic { background: #17182e; }
   a.current { background: #2a2650; }
   .work { background: #2d2652; color: #b39dff; }
