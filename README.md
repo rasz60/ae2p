@@ -12,6 +12,7 @@
 | `/agent/` | 에이전트 (잡 모니터 · 잡 요청) | 분리 예정 |
 | `/workout/` | 운동기록 | `rasz60/work-doubt` (Go API :8091) |
 | `/career/` | 커리어++ (공개 이력서 · 프로젝트 · 채용공고 · 연락) | `careerpad` (Go API :8092) |
+| iPhone 앱 | **ae:p** — 위 전부를 앱 하나로 (TestFlight). 설치 · 빌드는 [mobile/README.md](mobile/README.md) | 여기 `mobile/` |
 
 ## 구조
 
@@ -23,6 +24,7 @@ ae2p/
 ├─ server/           포털 API (Fastify): 초대 · 계정 목록 · 삭제 — service_role 키는 여기서만
 ├─ design/           로고 생성 스크립트 (npm run brand → public/brand/*.svg, PWA 아이콘)
 ├─ deploy/Caddyfile  도메인 전체 라우팅 (포털 + 모든 앱)
+├─ mobile/           iPhone 앱 ae:p (Expo): 포털을 WebView 로 + Apple 건강 읽기. 웹 빌드 · 배포와는 따로 (npm 패키지도 따로)
 └─ supabase/setup.sql 관리자 지정 등 1회 설정
 ```
 

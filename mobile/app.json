@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "ae:p",
+    "slug": "aep",
+    "scheme": "aep",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.devsixt.aep",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.devsixt.aep",
+      "edgeToEdgeEnabled": true
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "imageWidth": 200,
+          "backgroundColor": "#F6F5FB",
+          "dark": { "image": "./assets/splash.png", "backgroundColor": "#14152A" }
+        }
+      ],
+      "expo-web-browser",
+      [
+        "@kingstinct/react-native-healthkit",
+        {
+          "NSHealthShareUsageDescription": "Apple Watch · 건강 앱에 기록된 운동(종류 · 시간 · 거리 · 칼로리 · 심박)을 읽어 운동기록에 자동으로 남깁니다.",
+          "NSHealthUpdateUsageDescription": false,
+          "background": false
+        }
+      ]
+    ]
+  }
+}
