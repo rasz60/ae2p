@@ -78,6 +78,11 @@ export function UserMenu() {
               계정 관리
             </Link>
           )}
+          {isAdmin && import.meta.env.VITE_BUILDER_ENABLED === 'true' && (
+            <Link role="menuitem" to="/admin/builder">
+              Claude 작업실
+            </Link>
+          )}
           <button role="menuitem" className="danger" onClick={logout}>
             로그아웃
           </button>

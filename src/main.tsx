@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './lib/auth';
 import { Admin } from './pages/Admin';
+import { Builder } from './pages/Builder';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { SetPassword } from './pages/SetPassword';
@@ -31,6 +32,9 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/set-password" element={<SetPassword />} />
           <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
           <Route path="/admin" element={<RequireAuth admin><Admin /></RequireAuth>} />
+          {import.meta.env.VITE_BUILDER_ENABLED === 'true' && (
+            <Route path="/admin/builder" element={<RequireAuth admin><Builder /></RequireAuth>} />
+          )}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

@@ -11,8 +11,11 @@ const notPortal = [new RegExp(`^(?:${[...appRoots, '/api', '/shell'].join('|')})
 
 export default defineConfig({
   server: {
-    // 개발 중 포털 API
-    proxy: { '/api/portal': { target: 'http://127.0.0.1:8090', rewrite: (p) => p.replace(/^\/api\/portal/, '') } },
+    // 개발 중 포털 API · Claude 작업실
+    proxy: {
+      '/api/portal': { target: 'http://127.0.0.1:8090', rewrite: (p) => p.replace(/^\/api\/portal/, '') },
+      '/api/builder': { target: 'http://127.0.0.1:8095', rewrite: (p) => p.replace(/^\/api\/builder/, '') },
+    },
   },
   plugins: [
     react(),

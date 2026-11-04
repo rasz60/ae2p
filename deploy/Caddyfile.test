@@ -1,0 +1,31 @@
+# /etc/caddy/Caddyfile — 테스트 서버 (ae2p-dev.duckdns.org). 포털 + Claude 작업실만 올린다.
+# 운영 서버의 deploy/Caddyfile 과 따로 관리한다. 다른 앱도 올리려면 deploy/Caddyfile 의 해당 블록을 복사해 넣는다.
+# 바꾼 뒤: sudo caddy validate --config /etc/caddy/Caddyfile && sudo systemctl reload caddy
+
+ae2p-dev.duckdns.org {
+	encode zstd gzip
+
+	# ── 포털 API (초대·계정 관리, pm2: ae2p-portal-api) ──
+	handle_path /api/portal/* {
+		reverse_proxy 127.0.0.1:8090
+	}
+
+	# ── Claude 작업실 (pm2: ae2p-builder) ── 진행 상황(SSE)을 버퍼링 없이 바로 흘려보낸다
+	handle_path /api/builder/* {
+		request_body {
+			max_size 210MB
+		}
+		reverse_proxy 127.0.0.1:8095 {
+			flush_interval -1
+		}
+	}
+
+	# ── 포털 (나머지 전부) ──
+	handle {
+		root * /home/ubuntu/ae2p/dist
+		@nocache not path /assets/*
+		header @nocache Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}

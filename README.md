@@ -22,8 +22,10 @@ ae2p/
 ├─ switcher/         <aep-switcher> 웹 컴포넌트 → dist/shell/switcher.js (각 앱이 불러간다)
 ├─ shared/apps.ts    앱 목록 (홈과 switcher 가 같이 씀) ← 앱을 추가하면 여기만 고친다
 ├─ server/           포털 API (Fastify): 초대 · 계정 목록 · 삭제 — service_role 키는 여기서만
+│  └─ builder.ts     Claude 작업실 (테스트 서버 전용): 관리자 채팅 → Claude 가 코드 수정 · 빌드 · 재기동
 ├─ design/           로고 생성 스크립트 (npm run brand → public/brand/*.svg, PWA 아이콘)
 ├─ deploy/Caddyfile  도메인 전체 라우팅 (포털 + 모든 앱)
+├─ deploy/TEST_SERVER.md  테스트 서버 구축 · Claude 작업실 안내 (A1 재시도 스크립트, Caddyfile.test)
 ├─ mobile/           iPhone 앱 ae:p (Expo): 포털을 WebView 로 + Apple 건강 읽기. 웹 빌드 · 배포와는 따로 (npm 패키지도 따로)
 └─ supabase/setup.sql 관리자 지정 등 1회 설정
 ```

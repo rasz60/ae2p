@@ -4,3 +4,4 @@ server-dist
 dev-dist
 .env
 *.log
+builder-uploads

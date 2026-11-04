@@ -1,35 +1,10 @@
 // 포털 API: 초대 · 계정 목록 · 계정 삭제 (관리자만)
 // service_role 키가 필요한 일만 여기서 한다. 나머지(로그인·비밀번호)는 웹이 Supabase 에 직접.
 // Caddy: /api/portal/* → 127.0.0.1:PORT (접두어를 떼고 넘긴다)
-import { createClient, type User } from '@supabase/supabase-js';
-import Fastify, { type FastifyReply, type FastifyRequest } from 'fastify';
-
-function env(name: string): string {
-  const v = process.env[name];
-  if (!v) throw new Error(`${name} 가 필요합니다 (.env)`);
-  return v;
-}
+import Fastify from 'fastify';
+import { admin, env, requireAdmin } from './common';
 
 const PUBLIC_URL = env('PUBLIC_URL').replace(/\/$/, '');
-const admin = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'), {
-  auth: { persistSession: false, autoRefreshToken: false },
-});
-
-declare module 'fastify' {
-  interface FastifyRequest {
-    user: User;
-  }
-}
-
-/** Authorization: Bearer <access token> 를 검증하고, app_metadata.role 이 admin 인지 본다 */
-async function requireAdmin(req: FastifyRequest, reply: FastifyReply) {
-  const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
-  if (!token) return reply.code(401).send({ error: '로그인이 필요해요.' });
-  const { data, error } = await admin.auth.getUser(token);
-  if (error || !data.user) return reply.code(401).send({ error: '로그인이 필요해요.' });
-  if (data.user.app_metadata.role !== 'admin') return reply.code(403).send({ error: '관리자만 할 수 있어요.' });
-  req.user = data.user;
-}
 
 const app = Fastify({ logger: { level: 'info' }, trustProxy: true });
 
