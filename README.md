@@ -68,7 +68,8 @@ npm run brand            # 로고·아이콘 다시 생성 (design/gen-brand.mjs
    - Redirect URLs: `https://ae2p.duckdns.org/**`, 개발용 `http://localhost:5173/**`
 3. **Authentication → Emails → SMTP Settings**: 외부 SMTP 연결 (Gmail 앱 비밀번호, Resend 등).
    기본 메일 서버는 발송 한도가 매우 작고 팀원 주소로만 보낼 수 있어 초대 메일이 안 갈 수 있다
-4. (선택) **Emails → Templates → Invite user**: 문구를 한국어로
+4. **Emails → Templates**: 초대 · 비밀번호 재설정 · 이메일 확인 · 로그인 링크 메일을 ae:p 템플릿으로 바꾼다.
+   제목과 본문은 [supabase/email-templates](supabase/email-templates/README.md)에 있다 (`npm run mail`로 생성, 원본은 `design/gen-mail.mjs`)
 5. **SQL Editor**: [supabase/setup.sql](supabase/setup.sql) 실행 (관리자 이메일 바꿔서)
 
 ## 배포 (Oracle 서버)
