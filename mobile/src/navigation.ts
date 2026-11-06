@@ -15,12 +15,15 @@ const parse = (url: string): URL | null => {
   }
 };
 
-/** 앱 안에서 그대로 연다: 포털과 모든 앱(같은 도메인), Supabase(로그인 · 메일 링크), 빈 페이지 */
+/**
+ * 앱 안에서 그대로 연다: 포털과 모든 앱(같은 도메인), Supabase(로그인 · 메일 링크), 네이버 로그인, 빈 페이지.
+ * 네이버 로그인은 포털 API 가 처리하고(/api/portal/naver/…) 네이버는 WebView 로그인을 막지 않아, 앱 안에서 끝난다
+ */
 export const isInternal = (url: string): boolean => {
   if (url.startsWith('about:') || url.startsWith('data:') || url.startsWith('blob:')) return true;
   const u = parse(url);
   if (!u) return false;
-  return u.hostname === HOST || u.hostname.endsWith('.supabase.co');
+  return u.hostname === HOST || u.hostname.endsWith('.supabase.co') || u.hostname === 'nid.naver.com';
 };
 
 /** Supabase 의 Google · 카카오 로그인 시작 주소인지 (…supabase.co/auth/v1/authorize?provider=…) */

@@ -5,7 +5,7 @@ import { useInstall } from '../lib/install';
 import { disablePush, enablePush, getPushState, type PushState } from '../lib/push';
 import { supabase } from '../lib/supabase';
 
-/** 오른쪽 위 계정 버튼: 이메일 · 푸시 알림 · 앱 설치 · 비밀번호 변경 · 계정 관리(관리자) · 로그아웃 */
+/** 오른쪽 위 계정 버튼: 이메일 · 푸시 알림 · 앱 설치 · 계정 설정 · 비밀번호 변경 · 계정 관리(관리자) · 로그아웃 */
 export function UserMenu() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
@@ -70,6 +70,9 @@ export function UserMenu() {
             <p className="menu-note">Safari 공유(⬆) → "홈 화면에 추가"로 설치하면 푸시 알림도 받을 수 있어요.</p>
           )}
           {note && <p className="menu-note error">{note}</p>}
+          <Link role="menuitem" to="/account">
+            계정 설정
+          </Link>
           <Link role="menuitem" to="/set-password">
             비밀번호 변경
           </Link>

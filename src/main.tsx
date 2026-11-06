@@ -3,6 +3,7 @@ import { StrictMode, type ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './lib/auth';
+import { Account } from './pages/Account';
 import { Admin } from './pages/Admin';
 import { Builder } from './pages/Builder';
 import { Home } from './pages/Home';
@@ -31,6 +32,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/login" element={<Login />} />
           <Route path="/set-password" element={<SetPassword />} />
           <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+          <Route path="/account" element={<RequireAuth><Account /></RequireAuth>} />
           <Route path="/admin" element={<RequireAuth admin><Admin /></RequireAuth>} />
           {import.meta.env.VITE_BUILDER_ENABLED === 'true' && (
             <Route path="/admin/builder" element={<RequireAuth admin><Builder /></RequireAuth>} />

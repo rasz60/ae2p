@@ -18,10 +18,10 @@
 
 ```
 ae2p/
-├─ src/              포털 웹 (React + Vite): 로그인 · 비밀번호 설정 · 홈 · 계정 관리
+├─ src/              포털 웹 (React + Vite): 로그인 · 비밀번호 설정 · 홈 · 계정 설정 · 계정 관리
 ├─ switcher/         <aep-switcher> 웹 컴포넌트 → dist/shell/switcher.js (각 앱이 불러간다)
 ├─ shared/apps.ts    앱 목록 (홈과 switcher 가 같이 씀) ← 앱을 추가하면 여기만 고친다
-├─ server/           포털 API (Fastify): 초대 · 계정 목록 · 삭제 — service_role 키는 여기서만
+├─ server/           포털 API (Fastify): 초대 · 계정 목록 · 삭제 · 네이버 로그인 — service_role 키는 여기서만
 │  └─ builder.ts     Claude 작업실 (테스트 서버 전용): 관리자 채팅 → Claude 가 코드 수정 · 빌드 · 재기동
 ├─ design/           로고 생성 스크립트 (npm run brand → public/brand/*.svg, PWA 아이콘)
 ├─ deploy/Caddyfile  도메인 전체 라우팅 (포털 + 모든 앱)
@@ -45,6 +45,10 @@ ae2p/
 - 받는 정보는 이메일과 비밀번호뿐.
 - 구글·카카오 로그인: 초대받은 이메일과 같은 계정이면 같은 계정으로 연결된다 (가입은 안 됨).
   비밀번호를 아직 안 정한 계정은 처음에 비밀번호 설정 화면을 거친다 (`user_metadata.password_set`).
+- 네이버 로그인: 로그인한 뒤 **계정 설정(`/account`)에서 "네이버 연결"** 을 한 번 하면, 다음부터 네이버로 로그인할 수 있다.
+  네이버는 이메일 인증 여부를 주지 않아 이메일로 자동 연결하지 않는다. 연결 정보는 네이버 고유 id 로 `app_metadata.naver` 에 저장된다.
+  Supabase 가 네이버를 지원하지 않아 포털 API([server/naver.ts](server/naver.ts))가 직접 처리한다.
+- 계정 설정(`/account`): 내 로그인 방법(이메일 · Google · 카카오 · 네이버) 확인, 네이버 연결 · 해제.
 - 관리자 = `app_metadata.role = 'admin'` (사용자가 스스로 못 바꾸는 값). [supabase/setup.sql](supabase/setup.sql) 로 지정.
 
 ## 개발
@@ -71,6 +75,17 @@ npm run brand            # 로고·아이콘 다시 생성 (design/gen-brand.mjs
 4. **Emails → Templates**: 초대 · 비밀번호 재설정 · 이메일 확인 · 로그인 링크 메일을 ae:p 템플릿으로 바꾼다.
    제목과 본문은 [supabase/email-templates](supabase/email-templates/README.md)에 있다 (`npm run mail`로 생성, 원본은 `design/gen-mail.mjs`)
 5. **SQL Editor**: [supabase/setup.sql](supabase/setup.sql) 실행 (관리자 이메일 바꿔서)
+
+## 네이버 로그인 설정 (1회)
+
+1. **네이버 개발자센터** (https://developers.naver.com) → Application → 애플리케이션 등록
+   - 사용 API: 네이버 로그인 / 제공 정보: 이메일 주소(선택 — 계정 설정에 연결된 계정을 보여 주는 용도)
+   - 환경: PC 웹, 서비스 URL `https://ae2p.duckdns.org`
+   - Callback URL: `https://ae2p.duckdns.org/api/portal/naver/callback` (개발용 `http://localhost:5173/api/portal/naver/callback`)
+   - '개발 중' 상태에서는 **멤버관리**에 등록한 네이버 아이디만 로그인할 수 있다. 모두에게 열려면 검수를 신청한다
+2. **서버 `.env`**: `NAVER_CLIENT_ID`, `NAVER_CLIENT_SECRET`, `VITE_NAVER_ENABLED=true`.
+   `VITE_NAVER_ENABLED` 는 빌드 때 읽으므로 넣은 뒤 다시 빌드 · 배포해야 버튼이 보인다
+3. 다른 환경(테스트 서버, Codespaces 등)은 그 환경의 `PUBLIC_URL` 기준 Callback URL 을 네이버에 추가한다
 
 ## 배포 (Oracle 서버)
 
