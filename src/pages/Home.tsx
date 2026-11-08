@@ -1,13 +1,17 @@
-import { APPS, appLogo, TONE_LABEL, type PortalApp } from '../../shared/apps';
+import { appLogo, TONE_LABEL, visibleApps, type PortalApp } from '../../shared/apps';
 import { isPlainClick, showLoader } from '../../shared/loader';
 import { Backdrop, Brand } from '../components/Brand';
 import { UserMenu } from '../components/UserMenu';
+import { useAuth } from '../lib/auth';
 
 /** 10월 25일 일요일 */
 const today = () => new Date().toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'long' });
 
 /** 앱 런처 */
 export function Home() {
+  const { user, isTester } = useAuth();
+  // 에이전트는 관리자와 공유받은 멤버에게만 보인다 (P-0004)
+  const apps = visibleApps(user?.app_metadata);
   return (
     <div className="page">
       <Backdrop />
@@ -23,9 +27,10 @@ export function Home() {
             t<b>[A]</b>k<b>[E]</b> c<b>[A]</b>r<b>[E]</b>.
           </h1>
           <p>일도, 운동도, 관심사도. 모두 한곳에서.</p>
+          {isTester && <p className="tester-note">테스터 모드예요. 새로 만든 데이터는 로그아웃하면 지워지고, 기본 데이터는 바꿀 수 없어요.</p>}
         </section>
         <ul className="app-grid">
-          {APPS.map((app) => (
+          {apps.map((app) => (
             <li key={app.id}>
               <AppCard app={app} />
             </li>

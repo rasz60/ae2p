@@ -3,11 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { useInstall } from '../lib/install';
 import { disablePush, enablePush, getPushState, type PushState } from '../lib/push';
-import { supabase } from '../lib/supabase';
+import { logout as signOut } from '../lib/tester';
 
 /** 오른쪽 위 계정 버튼: 이메일 · 푸시 알림 · 앱 설치 · 계정 설정 · 비밀번호 변경 · 계정 관리(관리자) · 로그아웃 */
 export function UserMenu() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, isTester } = useAuth();
+  const [leaving, setLeaving] = useState(false);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -41,8 +42,10 @@ export function UserMenu() {
     return () => (document.removeEventListener('pointerdown', onDown), document.removeEventListener('keydown', onKey));
   }, [open]);
 
+  // 테스터면 테스터 데이터를 지운 뒤 로그아웃한다 (최대 5초)
   async function logout() {
-    await supabase.auth.signOut();
+    setLeaving(true);
+    await signOut();
     navigate('/login', { replace: true });
   }
 
@@ -70,12 +73,17 @@ export function UserMenu() {
             <p className="menu-note">Safari 공유(⬆) → "홈 화면에 추가"로 설치하면 푸시 알림도 받을 수 있어요.</p>
           )}
           {note && <p className="menu-note error">{note}</p>}
-          <Link role="menuitem" to="/account">
-            계정 설정
-          </Link>
-          <Link role="menuitem" to="/set-password">
-            비밀번호 변경
-          </Link>
+          {/* 공용 테스터 계정은 계정 설정 · 비밀번호를 바꿀 수 없다 (P-0004) */}
+          {!isTester && (
+            <Link role="menuitem" to="/account">
+              계정 설정
+            </Link>
+          )}
+          {!isTester && (
+            <Link role="menuitem" to="/set-password">
+              비밀번호 변경
+            </Link>
+          )}
           {isAdmin && (
             <Link role="menuitem" to="/admin">
               계정 관리
@@ -86,8 +94,8 @@ export function UserMenu() {
               Claude 작업실
             </Link>
           )}
-          <button role="menuitem" className="danger" onClick={logout}>
-            로그아웃
+          <button role="menuitem" className="danger" disabled={leaving} onClick={logout}>
+            {leaving ? (isTester ? '테스터 데이터를 지우는 중…' : '로그아웃하는 중…') : '로그아웃'}
           </button>
         </div>
       )}

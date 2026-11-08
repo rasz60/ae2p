@@ -8,8 +8,12 @@
 //   <aep-switcher mode="inline"></aep-switcher>                      앱 툴바 안에 그냥 놓이는 버튼 (크기: CSS --aep-switcher-size)
 //
 // Shadow DOM 이라 앱 CSS 와 섞이지 않는다. 앱 목록은 포털 저장소의 shared/apps.ts 를 빌드할 때 넣는다
+//
+// P-0004: 같은 출처 localStorage 의 Supabase 세션(app_metadata)을 읽어
+//   - 에이전트 항목은 관리자 · 공유받은 멤버에게만 보인다 (실제 막기는 업무일지 API)
+//   - 공용 테스터 계정이면 화면 위에 '테스터 모드' 띠를 붙인다
 import favicon from '../public/favicon.svg?raw';
-import { APPS, appLogo, currentApp } from '../shared/apps';
+import { APPS, appLogo, currentApp, isTesterMeta, visibleApps, type AppMetadata } from '../shared/apps';
 import { isPlainClick, showLoader } from '../shared/loader';
 
 const CSS = `
@@ -69,6 +73,39 @@ a.soon { opacity: .45; pointer-events: none; }
 }
 `;
 
+/** 포털이 만든 Supabase 세션(localStorage 'sb-<프로젝트>-auth-token')의 app_metadata. 없으면 undefined */
+function sessionMeta(): AppMetadata {
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !/^sb-.+-auth-token$/.test(key)) continue;
+      const session = JSON.parse(localStorage.getItem(key) ?? 'null') as { user?: { app_metadata?: AppMetadata } } | null;
+      if (session?.user) return session.user.app_metadata ?? {};
+    }
+  } catch {
+    // 저장소를 못 읽으면 기본 목록(에이전트 숨김)
+  }
+  return undefined;
+}
+
+const TESTER_BAND_ID = 'aep-tester-band';
+/** 테스터 모드 띠. 화면 위 가운데에 떠 있고 누를 수 없다 (앱 조작을 막지 않게) */
+function mountTesterBand() {
+  if (document.getElementById(TESTER_BAND_ID)) return;
+  const band = document.createElement('div');
+  band.id = TESTER_BAND_ID;
+  band.setAttribute('role', 'status');
+  band.textContent = '테스터 모드 · 새로 만든 데이터는 로그아웃하면 지워져요 · 기본 데이터는 바꿀 수 없어요';
+  Object.assign(band.style, {
+    position: 'fixed', top: 'calc(6px + env(safe-area-inset-top))', left: '50%', transform: 'translateX(-50%)',
+    zIndex: '2147483001', maxWidth: 'calc(100vw - 24px)', padding: '4px 12px', borderRadius: '999px',
+    background: 'rgb(253 234 226 / .94)', color: '#b0441e', border: '1px solid #f6c9b6',
+    font: "600 12px/1.4 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif",
+    textAlign: 'center', pointerEvents: 'none', boxShadow: '0 6px 16px -10px rgb(176 68 30 / .6)',
+  } satisfies Partial<CSSStyleDeclaration>);
+  document.body.append(band);
+}
+
 const HOME_ICON =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>';
 
@@ -80,8 +117,10 @@ class AepSwitcher extends HTMLElement {
     if (this.shadowRoot) return;
     const root = this.attachShadow({ mode: 'open' });
     const here = currentApp(location.pathname);
+    const meta = sessionMeta();
+    if (isTesterMeta(meta)) mountTesterBand();
 
-    const items = APPS.map((a) => {
+    const items = visibleApps(meta).map((a) => {
       const logo = appLogo(a);
       return `<a href="${a.path}" data-app="${a.id}" class="${a === here ? 'current' : ''} ${a.ready ? '' : 'soon'}" ${a.ready ? '' : 'aria-disabled="true" tabindex="-1"'}>
           <span class="ic ${a.tone}" style="--logo:${logo.size}">${logo.html}</span>${a.name}${a.ready ? '' : '<span class="tag">준비 중</span>'}

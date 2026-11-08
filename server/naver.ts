@@ -162,6 +162,8 @@ export function naverRoutes(app: FastifyInstance) {
   app.post('/naver/link', async (req, reply) => {
     const user = await bearerUser(req);
     if (!user) return reply.code(401).send({ error: '로그인이 필요해요.' });
+    // 공용 테스터 계정은 로그인 방법을 바꿀 수 없다 (P-0004)
+    if (user.app_metadata.role === 'tester') return reply.code(403).send({ error: '테스터 계정은 계정 설정을 바꿀 수 없어요.' });
     if (!enabled) return reply.code(503).send({ error: '네이버 로그인이 아직 준비되지 않았어요.' });
     const state = newState({ mode: 'link', userId: user.id, next: '/account' });
     setStateCookie(reply, 'link', state);
@@ -172,6 +174,7 @@ export function naverRoutes(app: FastifyInstance) {
   app.delete('/naver/link', async (req, reply) => {
     const user = await bearerUser(req);
     if (!user) return reply.code(401).send({ error: '로그인이 필요해요.' });
+    if (user.app_metadata.role === 'tester') return reply.code(403).send({ error: '테스터 계정은 계정 설정을 바꿀 수 없어요.' });
     const { error } = await admin.auth.admin.updateUserById(user.id, { app_metadata: { naver: null } });
     if (error) return reply.code(500).send({ error: error.message });
     req.log.info({ user: user.id }, 'naver unlinked');

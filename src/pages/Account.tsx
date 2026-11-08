@@ -36,7 +36,7 @@ const date = (iso: string) => new Date(iso).toLocaleDateString('ko-KR');
 
 /** 계정 설정: 내 계정 · 로그인 방법 (네이버 연결/해제) */
 export function Account() {
-  const { user: sessionUser } = useAuth();
+  const { user: sessionUser, isTester } = useAuth();
   // 세션에 든 사용자 정보는 로그인 시점 것이라, 연결 직후의 app_metadata 를 보려면 서버에서 새로 받는다
   const [user, setUser] = useState<User | null>(sessionUser);
   const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
@@ -99,49 +99,55 @@ export function Account() {
       <main className="admin">
         <h1 className="page-title">계정 설정</h1>
 
-        <section className="card">
-          <h2>로그인 방법</h2>
-          <p className="muted account-lead">{user?.email}</p>
-          <ul className="method-list">
-            <Method icon={<span className="method-mark">@</span>} name="이메일 · 비밀번호" meta="초대받은 이메일로 로그인">
-              <Link className="btn btn-ghost bd-small" to="/set-password">
-                비밀번호 변경
-              </Link>
-            </Method>
-            <Method icon={GOOGLE_ICON} name="Google" meta="같은 이메일의 Google 계정으로 로그인하면 자동으로 연결돼요">
-              <Status on={providers.has('google')} />
-            </Method>
-            <Method icon={KAKAO_ICON} tone="kakao" name="카카오" meta="같은 이메일의 카카오 계정으로 로그인하면 자동으로 연결돼요">
-              <Status on={providers.has('kakao')} />
-            </Method>
-            {NAVER_ENABLED && (
-              <Method
-                icon={NAVER_ICON}
-                tone="naver"
-                name="네이버"
-                meta={naver ? `${naver.email ?? '네이버 계정'} · ${date(naver.linked_at)} 연결` : '여기서 한 번 연결하면 다음부터 네이버로 로그인할 수 있어요'}
-              >
-                {naver ? (
-                  <>
-                    <Status on />
-                    <button className="btn btn-ghost bd-small" disabled={busy} onClick={unlinkNaver}>
-                      연결 해제
-                    </button>
-                  </>
-                ) : (
-                  <button className="btn btn-naver bd-small" disabled={busy} onClick={linkNaver}>
-                    {busy ? '이동 중…' : '연결하기'}
-                  </button>
-                )}
+        {isTester ? (
+          <section className="card">
+            <p className="muted">테스터 계정은 계정 설정을 바꿀 수 없어요.</p>
+          </section>
+        ) : (
+          <section className="card">
+            <h2>로그인 방법</h2>
+            <p className="muted account-lead">{user?.email}</p>
+            <ul className="method-list">
+              <Method icon={<span className="method-mark">@</span>} name="이메일 · 비밀번호" meta="초대받은 이메일로 로그인">
+                <Link className="btn btn-ghost bd-small" to="/set-password">
+                  비밀번호 변경
+                </Link>
               </Method>
+              <Method icon={GOOGLE_ICON} name="Google" meta="같은 이메일의 Google 계정으로 로그인하면 자동으로 연결돼요">
+                <Status on={providers.has('google')} />
+              </Method>
+              <Method icon={KAKAO_ICON} tone="kakao" name="카카오" meta="같은 이메일의 카카오 계정으로 로그인하면 자동으로 연결돼요">
+                <Status on={providers.has('kakao')} />
+              </Method>
+              {NAVER_ENABLED && (
+                <Method
+                  icon={NAVER_ICON}
+                  tone="naver"
+                  name="네이버"
+                  meta={naver ? `${naver.email ?? '네이버 계정'} · ${date(naver.linked_at)} 연결` : '여기서 한 번 연결하면 다음부터 네이버로 로그인할 수 있어요'}
+                >
+                  {naver ? (
+                    <>
+                      <Status on />
+                      <button className="btn btn-ghost bd-small" disabled={busy} onClick={unlinkNaver}>
+                        연결 해제
+                      </button>
+                    </>
+                  ) : (
+                    <button className="btn btn-naver bd-small" disabled={busy} onClick={linkNaver}>
+                      {busy ? '이동 중…' : '연결하기'}
+                    </button>
+                  )}
+                </Method>
+              )}
+            </ul>
+            {result && (
+              <p className={result.ok ? 'notice' : 'error'} role="status">
+                {result.text}
+              </p>
             )}
-          </ul>
-          {result && (
-            <p className={result.ok ? 'notice' : 'error'} role="status">
-              {result.text}
-            </p>
-          )}
-        </section>
+          </section>
+        )}
       </main>
     </div>
   );

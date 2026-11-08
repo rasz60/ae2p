@@ -3,17 +3,30 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import type { NavigateFunction } from 'react-router-dom';
 import { currentApp } from '../../shared/apps';
 import { supabase } from './supabase';
+import { canUseAgent, isTester } from './tester';
 
 interface Auth {
   ready: boolean;
   session: Session | null;
   user: User | null;
   isAdmin: boolean;
+  /** 공용 테스터 계정 (P-0004). 비밀번호 · 계정 설정 · 에이전트를 쓸 수 없다 */
+  isTester: boolean;
+  /** 에이전트를 볼 수 있는 계정: 관리자 · 공유받은 멤버 */
+  canUseAgent: boolean;
   /** 초대 수락 직후·소셜 첫 로그인처럼 아직 비밀번호를 정하지 않은 계정 */
   needsPassword: boolean;
 }
 
-const AuthContext = createContext<Auth>({ ready: false, session: null, user: null, isAdmin: false, needsPassword: false });
+const AuthContext = createContext<Auth>({
+  ready: false,
+  session: null,
+  user: null,
+  isAdmin: false,
+  isTester: false,
+  canUseAgent: false,
+  needsPassword: false,
+});
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
@@ -35,7 +48,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     // app_metadata 는 서버(service_role)만 바꿀 수 있어 권한 판단에 쓴다. user_metadata 는 본인이 바꿀 수 있다
     isAdmin: user?.app_metadata.role === 'admin',
-    needsPassword: !!user && user.user_metadata.password_set !== true,
+    isTester: isTester(user),
+    canUseAgent: canUseAgent(user),
+    // 테스터는 비밀번호 없이 '테스터로 입장하기'로만 들어온다
+    needsPassword: !!user && !isTester(user) && user.user_metadata.password_set !== true,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

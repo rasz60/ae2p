@@ -11,7 +11,7 @@ const MIN = 8;
  * 초대 메일 링크, 비밀번호 재설정 링크, 소셜 첫 로그인 모두 여기로 온다 (링크의 토큰은 supabase-js 가 읽어 로그인시킨다)
  */
 export function SetPassword() {
-  const { ready, session, user, needsPassword } = useAuth();
+  const { ready, session, user, needsPassword, isTester } = useAuth();
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const next = safeNext(params.get('next'));
@@ -41,6 +41,20 @@ export function SetPassword() {
           <p>링크가 만료됐거나 이미 사용됐어요.</p>
           <Link className="btn btn-primary" to="/login">
             로그인하기
+          </Link>
+        </div>
+      </AuthLayout>
+    );
+  }
+
+  // 공용 테스터 계정은 비밀번호를 바꿀 수 없다 (P-0004). 바꾸면 다음 사람이 못 들어올 수 있다
+  if (isTester) {
+    return (
+      <AuthLayout>
+        <div className="auth-done">
+          <p>테스터 계정은 비밀번호를 바꿀 수 없어요.</p>
+          <Link className="btn btn-primary" to="/">
+            홈으로
           </Link>
         </div>
       </AuthLayout>

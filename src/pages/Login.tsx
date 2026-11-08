@@ -2,8 +2,13 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { AuthLayout } from '../components/AuthLayout';
 import { SOCIAL, type SocialItem } from '../components/Social';
+import { portalApi } from '../lib/api';
 import { goTo, safeNext, useAuth } from '../lib/auth';
 import { supabase } from '../lib/supabase';
+import { logout } from '../lib/tester';
+
+/** 공용 테스터 계정으로 둘러보기 (P-0004). 빌드 때 켠다 */
+const TESTER_ENABLED = import.meta.env.VITE_TESTER_ENABLED === 'true';
 
 /** 소셜 로그인이 실패하고 돌아오면 주소(?error_description= 또는 #error_description=)에 이유가 붙어 온다 */
 function oauthError(): string {
@@ -50,6 +55,7 @@ export function Login() {
   // 각 앱의 앱 전환 메뉴에서 '로그아웃'을 누르면 /login?logout=1 로 온다
   const [loggingOut, setLoggingOut] = useState(params.get('logout') === '1');
   const [naverBusy, setNaverBusy] = useState(false);
+  const [testerBusy, setTesterBusy] = useState(false);
   const naverRead = useRef(false);
 
   // 네이버 로그인 결과 처리. 개발 모드(StrictMode)에서 effect 가 두 번 돌아도 토큰은 한 번만 쓴다
@@ -69,7 +75,8 @@ export function Login() {
 
   useEffect(() => {
     if (!loggingOut) return;
-    supabase.auth.signOut().finally(() => {
+    // 테스터면 먼저 테스터 데이터를 지운다 (lib/tester.ts)
+    logout().finally(() => {
       setLoggingOut(false);
       navigate('/login', { replace: true });
     });
@@ -99,6 +106,20 @@ export function Login() {
     setBusy(false);
   }
 
+  // 서버가 테스터 계정의 1회용 로그인 토큰을 주면 세션을 연다 (네이버 로그인과 같은 방식)
+  async function enterAsTester() {
+    setTesterBusy(true);
+    setError('');
+    try {
+      const { token } = await portalApi<{ token: string }>('/tester/login', { method: 'POST', body: '{}' });
+      const { error } = await supabase.auth.verifyOtp({ token_hash: token, type: 'magiclink' });
+      if (error) throw new Error('테스터 입장에 실패했어요. 다시 시도해 주세요.');
+    } catch (e) {
+      setError((e as Error).message);
+      setTesterBusy(false);
+    }
+  }
+
   async function social(item: SocialItem) {
     setError('');
     // 네이버: 포털 API 가 네이버 로그인으로 보낸다
@@ -110,7 +131,14 @@ export function Login() {
     if (error) setError(error.message);
   }
 
-  if (!ready || loggingOut) return null;
+  if (!ready) return null;
+  if (loggingOut) {
+    return (
+      <AuthLayout>
+        <p className="auth-done muted">로그아웃하는 중…</p>
+      </AuthLayout>
+    );
+  }
   if (naverBusy) {
     return (
       <AuthLayout>
@@ -174,6 +202,14 @@ export function Login() {
             ))}
           </div>
           <p className="auth-note">초대받은 계정으로만 들어올 수 있어요.</p>
+          {TESTER_ENABLED && (
+            <div className="tester-entry">
+              <button type="button" className="btn btn-ghost" disabled={testerBusy} onClick={enterAsTester}>
+                {testerBusy ? '들어가는 중…' : '테스터로 입장하기'}
+              </button>
+              <p className="muted">공용 테스터 계정으로 둘러봐요. 새로 만든 데이터는 로그아웃하면 지워져요.</p>
+            </div>
+          )}
         </>
       )}
     </AuthLayout>

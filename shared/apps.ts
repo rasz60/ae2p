@@ -14,6 +14,10 @@ export interface PortalApp {
   ready: boolean;
   /** 앱의 대표 로고 (SVG). 없으면 축 아이콘. size = 동그라미 안에서 차지하는 폭(%) */
   logo?: { svg: string; size: number };
+  /** 'agent' 면 관리자와 에이전트를 공유받은 멤버에게만 보인다 (P-0004. 실제 막기는 업무일지 API 가 한다) */
+  access?: 'agent';
+  /** 테스터 로그아웃 직전에 포털이 POST 로 부르는 정리 API (P-0004). 테스터가 새로 만든 데이터를 지운다 */
+  testerReset?: string;
 }
 
 // ── 앱별 대표 로고 ─────────────────────────
@@ -69,22 +73,34 @@ const RESUME =
 export const APPS: PortalApp[] = [
   {
     id: 'diary', name: '업무일지++', desc: '업무 · 일지 · 캘린더', path: '/diary/', tone: 'work', ready: true,
-    logo: { svg: TURTLE, size: 72 },
+    logo: { svg: TURTLE, size: 72 }, testerReset: '/api/diary/tester/reset',
   },
   // 별도 저장소로 떼어 내기 전까지는 업무일지 안의 모니터 화면 (떼어 내면 /agent/)
   {
     id: 'agent', name: '에이전트', desc: '잡 모니터 · 잡 요청', path: '/diary/monitor', tone: 'project', ready: true,
-    logo: { svg: MONITOR, size: 56 },
+    logo: { svg: MONITOR, size: 56 }, access: 'agent',
   },
   {
     id: 'workout', name: '운동기록', desc: '체성분 · 운동 · AI 코치', path: '/workout/', tone: 'health', ready: true,
-    logo: { svg: TREND, size: 100 },
+    logo: { svg: TREND, size: 100 }, testerReset: '/api/workout/api/v1/tester/reset',
   },
   {
     id: 'career', name: '커리어++', desc: '이력 · 프로젝트 · 채용공고', path: '/career/', tone: 'interest', ready: true,
-    logo: { svg: RESUME, size: 60 },
+    logo: { svg: RESUME, size: 60 }, testerReset: '/api/career/api/v1/me/tester/reset',
   },
 ];
+
+/** Supabase Auth 의 app_metadata (role · agent_share). 사용자가 스스로 못 바꾼다 */
+export type AppMetadata = Record<string, unknown> | null | undefined;
+
+export const isTesterMeta = (meta: AppMetadata) => meta?.role === 'tester';
+
+/** 에이전트를 볼 수 있는 계정: 관리자, 또는 관리자가 공유한 멤버. 테스터는 못 본다 (업무일지 API 와 같은 규칙) */
+export const canUseAgent = (meta: AppMetadata) =>
+  meta?.role === 'admin' || (meta?.role !== 'tester' && meta?.agent_share === true);
+
+/** 이 계정에게 보여 줄 앱 (홈 · switcher.js) */
+export const visibleApps = (meta: AppMetadata) => APPS.filter((a) => a.access !== 'agent' || canUseAgent(meta));
 
 /** 축별 아이콘 (24×24, 선 2px). 로고가 없는 앱에 쓴다 */
 export const TONE_ICON: Record<AppTone, string> = {

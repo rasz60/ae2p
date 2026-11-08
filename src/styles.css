@@ -335,3 +335,19 @@ a.app-card:active { transform: scale(.98); }
   .user-list li { flex-wrap: wrap; }
   .user-list .user-main { flex-basis: 100%; }
 }
+
+/* ── 테스터 계정 · 에이전트 공유 (P-0004) ── */
+.tester-entry { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--card-line); display: grid; gap: 8px; text-align: center; }
+.tester-entry .muted { margin: 0; font-size: 13px; }
+.tester-note {
+  display: inline-block; margin-top: 12px; padding: 6px 12px; border-radius: 999px;
+  background: var(--interest-bg); color: var(--interest-ink); font-size: 13px;
+}
+.agent-share { flex: none; display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
+.agent-share input { width: 16px; height: 16px; accent-color: var(--project); }
+.agent-share.is-off { opacity: 0.45; cursor: not-allowed; }
+.tester-card { display: grid; gap: 12px; }
+.tester-state { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; font-size: 14px; }
+.tester-state dt { color: var(--muted); }
+.tester-state dd { margin: 0; }
+.tester-actions { display: flex; gap: 8px; flex-wrap: wrap; }
