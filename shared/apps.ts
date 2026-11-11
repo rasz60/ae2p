@@ -12,7 +12,7 @@ export interface PortalApp {
   tone: AppTone;
   /** false 면 '준비 중'으로 보이고 누를 수 없다 */
   ready: boolean;
-  /** 앱의 대표 로고 (SVG). 없으면 축 아이콘. size = 동그라미 안에서 차지하는 폭(%) */
+  /** 앱의 대표 로고 (SVG). 없으면 축 아이콘. size = 아이콘 칸 안에서 차지하는 폭(%) */
   logo?: { svg: string; size: number };
   /** 'agent' 면 관리자와 에이전트를 공유받은 멤버에게만 보인다 (P-0004. 실제 막기는 업무일지 API 가 한다) */
   access?: 'agent';
@@ -21,13 +21,13 @@ export interface PortalApp {
 }
 
 // ── 앱별 대표 로고 ─────────────────────────
-// 각 앱의 UI 콘셉트를 그대로 가져온다: 업무일지·에이전트 = kingtepad 픽셀 아이콘, 운동기록 = 흑백 모노크롬
+// 12×12 도트 아이콘. 자판기 칸 · 앱 전환 목록 · 로딩 화면이 같이 쓴다 (운동기록 · 커리어++ 앱 안의 아이콘과도 같은 그림)
 
-/** 픽셀 아트(문자 격자) → SVG. k(외곽선)는 테마에 따라 --px-ink 로 바뀐다 */
-const PX: Record<string, string> = {
-  k: 'var(--px-ink, #1e1e1e)', g: '#3ec46d', d: '#1f8a4c', e: '#a8e07a', m: '#f6dfb8', b: '#4d8dff',
-};
-function pixelSvg(rows: string[]): string {
+/** 픽셀 아트(문자 격자) → SVG. k(외곽선)는 테마에 따라 --px-ink 로 바뀐다. a 는 앱마다 다른 포인트색 */
+function pixelSvg(rows: string[], accent: string): string {
+  const PX: Record<string, string> = {
+    k: 'var(--px-ink, #1f2d3a)', w: '#ffffff', a: accent, b: '#2f6f8f', g: '#9be37a', d: '#d9dee8',
+  };
   let rects = '';
   rows.forEach((row, y) => {
     for (let x = 0; x < row.length; x++) {
@@ -38,55 +38,84 @@ function pixelSvg(rows: string[]): string {
   return `<svg viewBox="0 0 ${rows[0]!.length} ${rows.length}" shape-rendering="crispEdges" aria-hidden="true">${rects}</svg>`;
 }
 
-const TURTLE = pixelSvg([
-  '..kkkkkkk......',
-  '.kgdgggdgk.kkk.',
-  'kgdgdgdgdgkekek',
-  'kggdgggdggkeeek',
-  'kkkkkkkkkkkkkk.',
-  '.kmmmmmmmmmk...',
-  '.kek.....kek...',
-  '.kkk.....kkk...',
-]);
+// 업무일지: 메모장
+const NOTEPAD = pixelSvg([
+  'kkkkkkkkkkkk',
+  'kaaaaaaaaaak',
+  'kwwwwwwwwwwk',
+  'kwkkkkkkkkwk',
+  'kwwwwwwwwwwk',
+  'kwkkkkkkwwwk',
+  'kwwwwwwwwwwk',
+  'kwkkkkkkkkwk',
+  'kwwwwwwwwwwk',
+  'kwkkkkwwwwwk',
+  'kwwwwwwwwwwk',
+  'kkkkkkkkkkkk',
+], '#3d63b8');
+// 에이전트: 모니터
 const MONITOR = pixelSvg([
-  'kkkkkkkkkkk',
-  'kbbbbbbbbbk',
-  'kbgbbbbbbbk',
-  'kbbgbbbbbbk',
-  'kbgbbgggbbk',
-  'kbbbbbbbbbk',
-  'kbbbbbbbbbk',
-  'kkkkkkkkkkk',
-  '....kkk....',
-  '..kkkkkkk..',
-]);
-// 운동기록(work-doubt): 검은 원 + 흰 추세선 (앱의 TREND 차트)
-const TREND =
-  '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#0b0b0b"/>' +
-  '<polyline points="5.5,15.5 9.5,11.5 12.5,14 17,8.5 18.8,10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-// 커리어++(careerpad): 이력서 한 장 + '+' (앱의 주황 포인트색)
-const RESUME =
-  '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="2.5" width="16" height="19" rx="2.5" fill="#fff" stroke="#f07a4e" stroke-width="1.8"/>' +
-  '<circle cx="9" cy="8.5" r="2.3" fill="#f07a4e"/>' +
-  '<path d="M7.5 14.5h9M7.5 17.5h5.5M14 8.5h3.6M15.8 6.7v3.6" fill="none" stroke="#f07a4e" stroke-width="1.7" stroke-linecap="round"/></svg>';
+  'kkkkkkkkkkkk',
+  'kbbbbbbbbbbk',
+  'kbgbbbbbbbbk',
+  'kbbgbbbbbbbk',
+  'kbgbbbbbbbbk',
+  'kbbbbggbbbbk',
+  'kbbbbbbbbbbk',
+  'kkkkkkkkkkkk',
+  '....kkkk....',
+  '.kkkkkkkkkk.',
+  '.kddddddddk.',
+  '.kkkkkkkkkk.',
+], '#2f6f8f');
+// 운동기록: 덤벨
+const DUMBBELL = pixelSvg([
+  '............',
+  '............',
+  '..kk....kk..',
+  '.kaak..kaak.',
+  'kkaakkkkaakk',
+  'kaaawwwwaaak',
+  'kaaawwwwaaak',
+  'kkaakkkkaakk',
+  '.kaak..kaak.',
+  '..kk....kk..',
+  '............',
+  '............',
+], '#c2564b');
+// 커리어++: 이력서 카드
+const IDCARD = pixelSvg([
+  'kkkkkkkkkkkk',
+  'kaaaaaaaaaak',
+  'kwwwwwwwwwwk',
+  'kwkkwwkkkkwk',
+  'kwkkwwwwwwwk',
+  'kwwwwwkkkkwk',
+  'kwwwwwwwwwwk',
+  'kwkkkkkkwwwk',
+  'kwwwwwwwwwwk',
+  'kwkkkkwwwwwk',
+  'kwwwwwwwwwwk',
+  'kkkkkkkkkkkk',
+], '#c2762b');
 
 export const APPS: PortalApp[] = [
   {
     id: 'diary', name: '업무일지++', desc: '업무 · 일지 · 캘린더', path: '/diary/', tone: 'work', ready: true,
-    logo: { svg: TURTLE, size: 72 }, testerReset: '/api/diary/tester/reset',
+    logo: { svg: NOTEPAD, size: 100 }, testerReset: '/api/diary/tester/reset',
   },
   // 별도 저장소로 떼어 내기 전까지는 업무일지 안의 모니터 화면 (떼어 내면 /agent/)
   {
     id: 'agent', name: '에이전트', desc: '잡 모니터 · 잡 요청', path: '/diary/monitor', tone: 'project', ready: true,
-    logo: { svg: MONITOR, size: 56 }, access: 'agent',
+    logo: { svg: MONITOR, size: 100 }, access: 'agent',
   },
   {
     id: 'workout', name: '운동기록', desc: '체성분 · 운동 · AI 코치', path: '/workout/', tone: 'health', ready: true,
-    logo: { svg: TREND, size: 100 }, testerReset: '/api/workout/api/v1/tester/reset',
+    logo: { svg: DUMBBELL, size: 100 }, testerReset: '/api/workout/api/v1/tester/reset',
   },
   {
     id: 'career', name: '커리어++', desc: '이력 · 프로젝트 · 채용공고', path: '/career/', tone: 'interest', ready: true,
-    logo: { svg: RESUME, size: 60 }, testerReset: '/api/career/api/v1/me/tester/reset',
+    logo: { svg: IDCARD, size: 100 }, testerReset: '/api/career/api/v1/me/tester/reset',
   },
 ];
 
@@ -115,7 +144,7 @@ export const TONE_LABEL: Record<AppTone, string> = { work: 'Work', project: 'Pro
 export const iconSvg = (tone: AppTone) =>
   `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TONE_ICON[tone]}</svg>`;
 
-/** 동그라미 안에 넣을 앱 로고. 크기는 style 의 --logo 로 넘긴다 (CSS: .xxx svg { width: var(--logo) }) */
+/** 아이콘 칸 안에 넣을 앱 로고. 크기는 style 의 --logo 로 넘긴다 (CSS: .xxx svg { width: var(--logo) }) */
 export const appLogo = (app: PortalApp) => ({
   html: app.logo?.svg ?? iconSvg(app.tone),
   size: `${app.logo?.size ?? 46}%`,

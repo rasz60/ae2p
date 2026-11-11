@@ -17,6 +17,7 @@
     "@fastify/multipart": "^10.1.6",
     "@supabase/supabase-js": "^2.118.0",
     "fastify": "^5.12.7",
+    "galmuri": "^2.40.3",
     "pretendard": "^1.3.9",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

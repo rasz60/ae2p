@@ -12,65 +12,65 @@
 // P-0004: 같은 출처 localStorage 의 Supabase 세션(app_metadata)을 읽어
 //   - 에이전트 항목은 관리자 · 공유받은 멤버에게만 보인다 (실제 막기는 업무일지 API)
 //   - 공용 테스터 계정이면 화면 위에 '테스터 모드' 띠를 붙인다
-import favicon from '../public/favicon.svg?raw';
 import { APPS, appLogo, currentApp, isTesterMeta, visibleApps, type AppMetadata } from '../shared/apps';
 import { isPlainClick, showLoader } from '../shared/loader';
 
 const CSS = `
-:host { all: initial; font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+:host { all: initial; font-family: 'Galmuri11', 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
 :host(:not([mode='inline'])) { position: fixed; z-index: 2147483000; }
 * { box-sizing: border-box; }
+/* 동전 모양 앱 전환 버튼: 아래 두께가 있고 누르면 내려간다 */
 .btn {
-  width: 44px; height: 44px; padding: 7px; border: 1px solid #ebe9f4; border-radius: 50%;
-  background: #fff; box-shadow: 0 8px 22px -10px rgb(90 80 200 / .55); cursor: pointer;
-  display: grid; place-items: center; transition: transform .12s;
+  width: 44px; height: 44px; padding: 7px; border: 3px solid #1f2d3a; border-radius: 0;
+  background: #f4e7b4; box-shadow: 0 4px 0 #1f2d3a; cursor: pointer;
+  display: grid; place-items: center; transition: transform .08s steps(2), box-shadow .08s steps(2);
 }
 /* 툴바 안 버튼 크기는 앱이 정한다: aep-switcher { --aep-switcher-size: 28px } (사용자 정의 속성은 all: initial 에도 상속된다) */
 :host([mode='inline']) .btn {
   width: var(--aep-switcher-size, 36px); height: var(--aep-switcher-size, 36px);
-  padding: calc(var(--aep-switcher-size, 36px) * .14); box-shadow: none;
+  padding: calc(var(--aep-switcher-size, 36px) * .14); border-width: 2px; box-shadow: 0 2px 0 #1f2d3a;
 }
-.btn:active { transform: scale(.94); }
-.btn:focus-visible { outline: 2px solid #6a5ff0; outline-offset: 2px; }
-.btn svg { width: 100%; height: 100%; }
+.btn:active { transform: translateY(3px); box-shadow: 0 0 0 #1f2d3a; }
+:host([mode='inline']) .btn:active { transform: translateY(2px); }
+.btn[aria-expanded='true'] { transform: translateY(3px); box-shadow: 0 0 0 #1f2d3a; }
+.btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; box-shadow: 0 0 0 6px #1f2d3a; }
+.btn svg { width: 100%; height: 100%; image-rendering: pixelated; }
 /* inline 모드는 호스트에 z-index 가 없어서, 패널에 직접 주지 않으면 뒤에 오는 앱 요소(position: relative 인 탭 등)가 패널 위에 그려진다 */
 .panel {
-  position: fixed; z-index: 2147483000; width: 264px; padding: 8px;
-  background: #fff; color: #2e3142; border: 1px solid #ebe9f4; border-radius: 18px;
-  box-shadow: 0 18px 40px -14px rgb(60 50 160 / .45);
+  position: fixed; z-index: 2147483000; width: 272px; padding: 6px;
+  background: #e7efed; color: #1c2631; border: 3px solid #1f2d3a; border-radius: 0;
+  box-shadow: 4px 4px 0 #1f2d3a;
   font-size: 14px; line-height: 1.4;
+  transform-origin: var(--origin, top left); animation: pop .14s steps(3);
 }
 .panel[hidden] { display: none; }
-.head { display: flex; align-items: center; gap: 8px; padding: 8px 10px 10px; color: #5d6177; font-size: 12px; border-bottom: 1px solid #ebe9f4; margin-bottom: 4px; }
-.head svg { width: 26px; height: 26px; }
-a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 12px; color: inherit; text-decoration: none; }
-a:hover, a:focus-visible { background: #f6f5fb; outline: none; }
-a.current { background: #f1efff; font-weight: 700; }
-a.soon { opacity: .45; pointer-events: none; }
-.ic { width: 32px; height: 32px; flex: none; border-radius: 50%; display: grid; place-items: center; overflow: hidden; --px-ink: #1e1e1e; }
-.ic svg { width: var(--logo, 56%); height: auto; display: block; }
-.home .ic { background: #f6f5fb; color: #5d6177; }
-.tag { margin-left: auto; font-size: 12px; color: #5d6177; }
-.work { background: #efe9ff; color: #8b6cf6; }
-.project { background: #e3eeff; color: #4e8bff; }
-.health { background: #e0f5ea; color: #2faf6b; }
-.interest { background: #fdeae2; color: #f07a4e; }
-.foot { border-top: 1px solid #ebe9f4; margin-top: 4px; padding-top: 4px; }
-.foot a { color: #c8344d; font-size: 13px; }
+@keyframes pop { from { opacity: 0; transform: translateY(-4px); } }
+.head { display: flex; align-items: center; gap: 8px; padding: 6px 8px 8px; color: #44525f; font-size: 12px; border-bottom: 3px dotted #1f2d3a; margin-bottom: 4px; }
+.head svg { width: 20px; height: 20px; }
+a { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 8px; color: inherit; text-decoration: none; font-weight: 700; }
+a:hover { background: #fff6cf; }
+a:focus-visible { background: #fff6cf; outline: 3px solid #1f2d3a; outline-offset: -3px; }
+a.current { background: #f4e7b4; }
+a.soon { opacity: .5; pointer-events: none; }
+.ic { width: 30px; height: 30px; flex: none; display: grid; place-items: center; --px-ink: #1f2d3a; }
+.ic svg { width: 100%; height: auto; display: block; }
+.tag { margin-left: auto; font-size: 12px; color: #44525f; font-weight: 400; }
+.foot { border-top: 3px dotted #1f2d3a; margin-top: 4px; padding-top: 4px; }
+.foot a { color: #a63a29; font-size: 13px; }
 @media (prefers-color-scheme: dark) {
-  .btn { background: #1f2038; border-color: #2e3050; }
-  .panel { background: #1f2038; color: #ecebfa; border-color: #2e3050; }
-  .head, .foot { border-color: #2e3050; }
-  .head, .tag, .home .ic { color: #a3a5c2; }
-  a:hover, a:focus-visible, .home .ic { background: #17182e; }
-  a.current { background: #2a2650; }
-  .work { background: #2d2652; color: #b39dff; }
-  .project { background: #1d2f55; color: #8fb6ff; }
-  .health { background: #183a2b; color: #6fd6a2; }
-  .interest { background: #43281f; color: #ffa684; }
-  .ic { --px-ink: #a7b6bd; }
-  .foot a { color: #ff7d90; }
+  .btn { border-color: #05090d; box-shadow: 0 4px 0 #05090d; }
+  :host([mode='inline']) .btn { box-shadow: 0 2px 0 #05090d; }
+  .btn:active, .btn[aria-expanded='true'] { box-shadow: 0 0 0 #05090d; }
+  .panel { background: #2d4156; color: #f1f5f8; border-color: #05090d; box-shadow: 4px 4px 0 #05090d; }
+  .head, .foot { border-color: #05090d; color: #a9bbc9; }
+  .tag { color: #a9bbc9; }
+  a:hover, a:focus-visible { background: #3e5368; }
+  a:focus-visible { outline-color: #f4e7b4; }
+  a.current { background: #4b5a42; }
+  .ic { --px-ink: #05090d; }
+  .foot a { color: #ff9a86; }
 }
+@media (prefers-reduced-motion: reduce) { .panel { animation: none; } .btn { transition: none; } }
 `;
 
 /** 포털이 만든 Supabase 세션(localStorage 'sb-<프로젝트>-auth-token')의 app_metadata. 없으면 undefined */
@@ -88,6 +88,13 @@ function sessionMeta(): AppMetadata {
   return undefined;
 }
 
+// 8×8 도트 동전 (앱 전환 버튼 · 머리말 · 홈 항목)
+const COIN_ROWS = ['..kkkk..', '.kyyyyk.', 'kyywwyyk', 'kywyyyyk', 'kywyyyyk', 'kyyyyyyk', '.kyyyyk.', '..kkkk..'];
+const COIN_FILL: Record<string, string> = { k: '#1f2d3a', y: '#f0c94a', w: '#fff6cf' };
+const COIN = `<svg viewBox="0 0 8 8" shape-rendering="crispEdges" aria-hidden="true">${COIN_ROWS.flatMap((row, y) =>
+  [...row].map((c, x) => (c === '.' ? '' : `<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="${COIN_FILL[c]}"/>`)),
+).join('')}</svg>`;
+
 const TESTER_BAND_ID = 'aep-tester-band';
 /** 테스터 모드 띠. 화면 위 가운데에 떠 있고 누를 수 없다 (앱 조작을 막지 않게) */
 function mountTesterBand() {
@@ -98,16 +105,13 @@ function mountTesterBand() {
   band.textContent = '테스터 모드 · 새로 만든 데이터는 로그아웃하면 지워져요 · 기본 데이터는 바꿀 수 없어요';
   Object.assign(band.style, {
     position: 'fixed', top: 'calc(6px + env(safe-area-inset-top))', left: '50%', transform: 'translateX(-50%)',
-    zIndex: '2147483001', maxWidth: 'calc(100vw - 24px)', padding: '4px 12px', borderRadius: '999px',
-    background: 'rgb(253 234 226 / .94)', color: '#b0441e', border: '1px solid #f6c9b6',
-    font: "600 12px/1.4 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif",
-    textAlign: 'center', pointerEvents: 'none', boxShadow: '0 6px 16px -10px rgb(176 68 30 / .6)',
+    zIndex: '2147483001', maxWidth: 'calc(100vw - 24px)', padding: '4px 10px', borderRadius: '0',
+    background: '#f4e7b4', color: '#1f2d3a', border: '3px solid #1f2d3a', boxShadow: '0 3px 0 #1f2d3a',
+    font: "700 12px/1.4 'Galmuri11', 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif",
+    textAlign: 'center', pointerEvents: 'none',
   } satisfies Partial<CSSStyleDeclaration>);
   document.body.append(band);
 }
-
-const HOME_ICON =
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>';
 
 class AepSwitcher extends HTMLElement {
   private panel!: HTMLElement;
@@ -128,10 +132,10 @@ class AepSwitcher extends HTMLElement {
     }).join('');
 
     root.innerHTML = `<style>${CSS}</style>
-      <button class="btn" part="button" aria-haspopup="true" aria-expanded="false" aria-label="앱 전환">${favicon}</button>
+      <button class="btn" part="button" aria-haspopup="true" aria-expanded="false" aria-label="앱 전환">${COIN}</button>
       <nav class="panel" hidden aria-label="ae:p 앱">
-        <div class="head">${favicon}<span>ae:p takecare</span></div>
-        <a href="/" class="home"><span class="ic">${HOME_ICON}</span>홈</a>
+        <div class="head">${COIN}<span>ae:p 자판기</span></div>
+        <a href="/" class="home"><span class="ic">${COIN}</span>홈 (자판기)</a>
         ${items}
         <div class="foot"><a href="/login?logout=1">로그아웃</a></div>
       </nav>`;

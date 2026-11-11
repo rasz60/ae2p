@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { Backdrop, Brand } from '../components/Brand';
+import { Brand } from '../components/Brand';
 import { UserMenu } from '../components/UserMenu';
 import { portalApi } from '../lib/api';
 import { useAuth } from '../lib/auth';
@@ -86,7 +86,6 @@ export function Admin() {
 
   return (
     <div className="page">
-      <Backdrop />
       <header className="topbar">
         <Link to="/" aria-label="홈">
           <Brand kind="mark" height={30} />

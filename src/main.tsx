@@ -9,6 +9,7 @@ import { Builder } from './pages/Builder';
 import { Home } from './pages/Home';
 import { Login } from './pages/Login';
 import { SetPassword } from './pages/SetPassword';
+import 'galmuri/dist/galmuri.css';
 import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
 import './styles.css';
 

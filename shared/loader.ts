@@ -1,4 +1,4 @@
-// 앱 사이를 오갈 때 보이는 로딩 화면: 가려는 앱의 로고 + 통통 튀는 ae + "○○ 여는 중…"
+// 앱 사이를 오갈 때 보이는 로딩 화면: 자판기 꺼내는 곳에 가려는 앱의 아이콘이 툭 떨어지고 "○○ 여는 중…"
 // 포털 홈(카드)·switcher.js(앱 안의 전환 메뉴)·포털 index.html(첫 화면)이 같이 쓴다.
 // 각 앱의 index.html 에도 같은 모양을 넣어 두면(첫 페인트 전) 화면이 끊기지 않고 이어진다
 import { appLogo, type PortalApp } from './apps.ts';
@@ -6,61 +6,48 @@ import { appLogo, type PortalApp } from './apps.ts';
 export const LOADER_CSS = `
 .aep-ld {
   position: fixed; inset: 0; z-index: 2147483646;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
-  background: #f6f5fb; color: #7b7f95;
-  font: 14px/1.4 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+  background: #d5e0dc; color: #1c2631;
+  font: 700 14px/1.4 'Galmuri11', 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   letter-spacing: .02em;
-  animation: aep-ld-in .2s ease-out both;
-  --px-ink: #1e1e1e;
+  animation: aep-ld-in .2s steps(3) both;
+  --px-ink: #1f2d3a;
 }
 .aep-ld p { margin: 0; }
-.aep-ld-logo {
-  width: 92px; height: 92px; border-radius: 50%;
-  display: grid; place-items: center;
-  box-shadow: 0 14px 34px -14px rgb(90 80 200 / .45);
-  animation: aep-ld-pop .45s cubic-bezier(.2, 1.4, .4, 1) both;
-}
-.aep-ld-logo svg { width: var(--logo); height: auto; display: block; }
-.aep-ld-work { background: #efe9ff; } .aep-ld-project { background: #e3eeff; }
-.aep-ld-health { background: #e0f5ea; } .aep-ld-interest { background: #fdeae2; }
-.aep-ld-ae { width: 58px; height: auto; overflow: visible; }
-.aep-ld-ae path { transform-box: fill-box; transform-origin: center bottom; animation: aep-ld-hop .9s ease-in-out infinite; }
-.aep-ld-ae .e { animation-delay: .18s; }
-.aep-ld-solo .aep-ld-ae { width: 96px; }
+/* 자판기 꺼내는 곳: 앱 아이콘이 툭 떨어져 들어간다 */
+.aep-ld-drop { position: relative; width: 120px; height: 112px; }
+.aep-ld-logo { position: absolute; left: 36px; top: 0; width: 48px; height: 48px; animation: aep-ld-fall 1.4s steps(7) infinite; }
+.aep-ld-logo svg { width: 100%; height: 100%; display: block; }
+.aep-ld-tray { position: absolute; left: 0; right: 0; bottom: 0; height: 44px; background: #26384a; border: 3px solid #1f2d3a; border-top-color: #9fb4c4; }
+.aep-ld-tray::before { content: ''; position: absolute; left: 14px; right: 14px; top: 10px; height: 4px; background: #0e1620; }
+.aep-ld-ae { width: 96px; height: auto; overflow: visible; display: block; animation: aep-ld-hop .9s steps(2) infinite; }
 @keyframes aep-ld-in { from { opacity: 0; } }
-@keyframes aep-ld-pop { from { transform: scale(.6); opacity: 0; } }
-@keyframes aep-ld-hop {
-  0%, 60%, 100% { transform: translateY(0) scale(1, 1); }
-  20% { transform: translateY(-16px) scale(.96, 1.04); }
-  45% { transform: translateY(0) scale(1.06, .92); }
-}
+@keyframes aep-ld-fall { 0% { transform: translateY(0); } 65% { transform: translateY(44px); } 78% { transform: translateY(36px); } 90%, 100% { transform: translateY(44px); } }
+@keyframes aep-ld-hop { 50% { transform: translateY(-8px); } }
 @media (prefers-color-scheme: dark) {
-  .aep-ld { background: #14152a; color: #9a9cb8; --px-ink: #a7b6bd; }
-  .aep-ld-work { background: #2d2652; } .aep-ld-project { background: #1d2f55; }
-  .aep-ld-health { background: #183a2b; } .aep-ld-interest { background: #43281f; }
+  .aep-ld { background: #131c25; color: #f1f5f8; --px-ink: #05090d; }
+  .aep-ld-tray { border-color: #05090d; border-top-color: #34495e; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .aep-ld, .aep-ld-logo, .aep-ld-ae path { animation: none; }
+  .aep-ld, .aep-ld-logo, .aep-ld-ae { animation: none; }
+  .aep-ld-logo { transform: translateY(44px); }
 }
 `;
 
-// 파비콘과 같은 ae (a 와 e 를 따로 튀게 하려고 path 를 나눠 둔다)
+// 도트 ae:p (브랜드 로고와 같은 그림)
 const AE =
-  '<svg class="aep-ld-ae" viewBox="4 4 200 112" aria-hidden="true">' +
-  '<defs><linearGradient id="aep-ld-grad" gradientUnits="userSpaceOnUse" x1="8" y1="40" x2="200" y2="90">' +
-  '<stop offset="0" stop-color="#4E8BFF"/><stop offset=".5" stop-color="#7A82FF"/><stop offset="1" stop-color="#D47CF2"/></linearGradient></defs>' +
-  '<g fill="none" stroke="url(#aep-ld-grad)" stroke-width="32" stroke-linecap="round" stroke-linejoin="round">' +
-  '<path class="a" d="M24 60a36 36 0 1 0 72 0a36 36 0 1 0 -72 0M96 42V96"/>' +
-  '<path class="e" d="M111 60H183A36 36 0 1 0 163.9 91.79"/></g></svg>';
+  '<svg class="aep-ld-ae" viewBox="0 0 19 9" shape-rendering="crispEdges" aria-hidden="true">' +
+  '<path fill="currentColor" d="M1 2h3v1h-3zM4 3h1v1h-1zM1 4h4v1h-4zM0 5h1v1h-1zM4 5h1v1h-1zM1 6h4v1h-4zM7 2h3v1h-3zM6 3h1v1h-1zM10 3h1v1h-1zM6 4h5v1h-5zM6 5h1v1h-1zM7 6h3v1h-3zM14 2h4v1h-4zM14 3h1v1h-1zM18 3h1v1h-1zM14 4h1v1h-1zM18 4h1v1h-1zM14 5h1v1h-1zM18 5h1v1h-1zM14 6h4v1h-4zM14 7h1v1h-1zM14 8h1v1h-1z"/>' +
+  '<path fill="#e0533d" d="M12 4h1v1h-1zM12 7h1v1h-1z"/></svg>';
 
-/** 로딩 화면 마크업. app 이 없으면 ae 만 크게 (포털로 갈 때) */
+/** 로딩 화면 마크업. app 이 없으면 ae:p 만 (포털로 갈 때) */
 export function loaderHtml(app?: PortalApp): string {
-  if (!app) return `<div class="aep-ld aep-ld-solo" role="status" aria-label="불러오는 중">${AE}<p>ae:p</p></div>`;
+  if (!app) return `<div class="aep-ld" role="status" aria-label="불러오는 중">${AE}<p>ae:p</p></div>`;
   const logo = appLogo(app);
   return (
     `<div class="aep-ld" role="status" aria-label="${app.name} 여는 중">` +
-    `<div class="aep-ld-logo aep-ld-${app.tone}" style="--logo:${logo.size}">${logo.html}</div>` +
-    `${AE}<p>${app.name} 여는 중…</p></div>`
+    `<div class="aep-ld-drop"><div class="aep-ld-logo">${logo.html}</div><div class="aep-ld-tray"></div></div>` +
+    `<p>${app.name} 여는 중…</p></div>`
   );
 }
 

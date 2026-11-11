@@ -12,16 +12,16 @@ mkdirSync(out, { recursive: true });
 
 // ── 색 (src/styles.css 의 라이트 테마와 같은 값) ──
 const C = {
-  bg: '#f6f5fb',
-  card: '#ffffff',
-  line: '#ebe9f4',
-  text: '#2e3142',
-  muted: '#5d6177',
-  link: '#5a4fe0',
-  btn: '#6a5ff0', // 그라데이션을 못 그리는 클라이언트용 단색
-  grad: 'linear-gradient(110deg, #3768e0 0%, #6a5ff0 50%, #9450e0 100%)',
+  bg: '#d5e0dc',
+  card: '#e7efed',
+  line: '#1f2d3a', // 외곽선 · 점선 (앱의 --edge 와 같은 값)
+  text: '#1c2631',
+  muted: '#44525f',
+  link: '#1f4f8a',
+  btn: '#f4e7b4', // 크림 버튼 + 잉크 글자
+  btnText: '#1f2d3a',
   // 앱 축 색 (업무 · 프로젝트 · 건강 · 관심) — 한 계정으로 여러 앱을 쓴다는 표시
-  axes: ['#8b6cf6', '#4e8bff', '#2faf6b', '#f07a4e'],
+  axes: ['#3d63b8', '#2f6f8f', '#c2564b', '#c2762b'],
 };
 const FONT = "-apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', 'Malgun Gothic', sans-serif";
 
@@ -77,7 +77,7 @@ const MAILS = [
 // Supabase 변수: {{ .ConfirmationURL }} 링크 · {{ .Email }} 받는 주소 · {{ .SiteURL }} https://ae2p.duckdns.org
 function layout(m) {
   const axisBar = C.axes
-    .map((c, i) => `<td width="18" height="4" style="background:${c};border-radius:2px;font-size:0;line-height:0;">&nbsp;</td>${i < C.axes.length - 1 ? '<td width="4" style="font-size:0;line-height:0;">&nbsp;</td>' : ''}`)
+    .map((c, i) => `<td width="18" height="6" style="background:${c};border:2px solid ${C.line};font-size:0;line-height:0;">&nbsp;</td>${i < C.axes.length - 1 ? '<td width="4" style="font-size:0;line-height:0;">&nbsp;</td>' : ''}`)
     .join('');
   const body = m.body
     .map((p, i) => `<p style="margin:${i ? '6px' : '12px'} 0 0;font-size:15px;line-height:1.7;color:${C.muted};">${p}</p>`)
@@ -100,11 +100,11 @@ function layout(m) {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:440px;">
         <tr>
           <td align="center" style="padding-bottom:20px;">
-            <a href="{{ .SiteURL }}" style="text-decoration:none;"><img src="{{ .SiteURL }}/pwa-192x192.png" width="56" height="56" alt="ae:p" style="display:block;border:0;border-radius:16px;"></a>
+            <a href="{{ .SiteURL }}" style="text-decoration:none;"><img src="{{ .SiteURL }}/pwa-192x192.png" width="56" height="56" alt="ae:p" style="display:block;border:0;image-rendering:pixelated;"></a>
           </td>
         </tr>
         <tr>
-          <td style="background:${C.card};border:1px solid ${C.line};border-radius:28px;padding:36px 32px 32px;">
+          <td style="background:${C.card};border:3px solid ${C.line};border-bottom-width:7px;padding:36px 32px 32px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
                 <td style="padding-bottom:18px;">
@@ -121,8 +121,8 @@ function layout(m) {
                 <td style="padding-top:28px;">
                   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                     <tr>
-                      <td align="center" bgcolor="${C.btn}" style="background-color:${C.btn};background-image:${C.grad};border-radius:14px;">
-                        <a href="{{ .ConfirmationURL }}" target="_blank" style="display:block;padding:15px 18px;font-size:16px;line-height:18px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:14px;">${m.button}</a>
+                      <td align="center" bgcolor="${C.btn}" style="background-color:${C.btn};border:3px solid ${C.line};border-bottom-width:6px;">
+                        <a href="{{ .ConfirmationURL }}" target="_blank" style="display:block;padding:15px 18px;font-size:16px;line-height:18px;font-weight:700;color:${C.btnText};text-decoration:none;">${m.button}</a>
                       </td>
                     </tr>
                   </table>
@@ -136,7 +136,7 @@ function layout(m) {
               </tr>
               <tr>
                 <td style="padding-top:24px;">
-                  <div style="border-top:1px solid ${C.line};font-size:0;line-height:0;">&nbsp;</div>
+                  <div style="border-top:3px dotted ${C.line};font-size:0;line-height:0;">&nbsp;</div>
                 </td>
               </tr>
               <tr>

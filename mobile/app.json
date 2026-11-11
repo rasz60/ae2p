@@ -25,8 +25,8 @@
         {
           "image": "./assets/splash.png",
           "imageWidth": 200,
-          "backgroundColor": "#F6F5FB",
-          "dark": { "image": "./assets/splash.png", "backgroundColor": "#14152A" }
+          "backgroundColor": "#D5E0DC",
+          "dark": { "image": "./assets/splash.png", "backgroundColor": "#131C25" }
         }
       ],
       "expo-web-browser",
