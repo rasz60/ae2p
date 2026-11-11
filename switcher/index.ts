@@ -21,65 +21,55 @@ const CSS = `
 :host(:not([mode='inline'])) { position: fixed; z-index: 2147483000; }
 * { box-sizing: border-box; }
 .btn {
-  width: 44px; height: 44px; padding: 7px; border: 1px solid #dfe2de; border-radius: 12px;
-  background: #fff; box-shadow: 0 1px 2px rgb(23 27 33 / .08), 0 8px 20px -12px rgb(23 27 33 / .35); cursor: pointer;
-  display: grid; place-items: center; transition: transform .14s cubic-bezier(.23, 1, .32, 1), border-color .15s;
+  width: 44px; height: 44px; padding: 7px; border: 1px solid #ebe9f4; border-radius: 50%;
+  background: #fff; box-shadow: 0 8px 22px -10px rgb(90 80 200 / .55); cursor: pointer;
+  display: grid; place-items: center; transition: transform .12s;
 }
 /* 툴바 안 버튼 크기는 앱이 정한다: aep-switcher { --aep-switcher-size: 28px } (사용자 정의 속성은 all: initial 에도 상속된다) */
 :host([mode='inline']) .btn {
   width: var(--aep-switcher-size, 36px); height: var(--aep-switcher-size, 36px);
   padding: calc(var(--aep-switcher-size, 36px) * .14); box-shadow: none;
 }
-.btn:active { transform: scale(.96); }
-.btn[aria-expanded='true'] { border-color: #8b929b; }
-.btn:focus-visible { outline: 2px solid #0a7d5a; outline-offset: 2px; }
-@media (hover: hover) and (pointer: fine) { .btn:hover { border-color: #8b929b; } }
+.btn:active { transform: scale(.94); }
+.btn:focus-visible { outline: 2px solid #6a5ff0; outline-offset: 2px; }
 .btn svg { width: 100%; height: 100%; }
 /* inline 모드는 호스트에 z-index 가 없어서, 패널에 직접 주지 않으면 뒤에 오는 앱 요소(position: relative 인 탭 등)가 패널 위에 그려진다 */
 .panel {
   position: fixed; z-index: 2147483000; width: 264px; padding: 8px;
-  background: #fff; color: #171b21; border: 1px solid #dfe2de; border-radius: 14px;
-  box-shadow: 0 1px 2px rgb(23 27 33 / .06), 0 16px 36px -16px rgb(23 27 33 / .4);
+  background: #fff; color: #2e3142; border: 1px solid #ebe9f4; border-radius: 18px;
+  box-shadow: 0 18px 40px -14px rgb(60 50 160 / .45);
   font-size: 14px; line-height: 1.4;
-  /* 버튼 쪽 모서리에서 펼쳐진다 (--origin 은 toggle 이 정한다) */
-  transform-origin: var(--origin, top left);
-  animation: pop .16s cubic-bezier(.23, 1, .32, 1);
 }
 .panel[hidden] { display: none; }
-@keyframes pop { from { opacity: 0; transform: scale(.96); } }
-@media (prefers-reduced-motion: reduce) { .panel { animation: none; } .btn { transition: none; } }
-.head { display: flex; align-items: center; gap: 8px; padding: 8px 10px 10px; color: #565d66; font-size: 12px; border-bottom: 1px solid #dfe2de; margin-bottom: 4px; }
+.head { display: flex; align-items: center; gap: 8px; padding: 8px 10px 10px; color: #5d6177; font-size: 12px; border-bottom: 1px solid #ebe9f4; margin-bottom: 4px; }
 .head svg { width: 26px; height: 26px; }
-a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: inherit; text-decoration: none; }
-a:hover { background: #f3f4f2; }
-a:focus-visible { background: #f3f4f2; outline: 2px solid #0a7d5a; outline-offset: -2px; }
-a.current { background: #eceeeb; font-weight: 700; }
+a { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 12px; color: inherit; text-decoration: none; }
+a:hover, a:focus-visible { background: #f6f5fb; outline: none; }
+a.current { background: #f1efff; font-weight: 700; }
 a.soon { opacity: .45; pointer-events: none; }
-.ic { width: 32px; height: 32px; flex: none; border-radius: 8px; display: grid; place-items: center; overflow: hidden; --px-ink: #1e1e1e; }
+.ic { width: 32px; height: 32px; flex: none; border-radius: 50%; display: grid; place-items: center; overflow: hidden; --px-ink: #1e1e1e; }
 .ic svg { width: var(--logo, 56%); height: auto; display: block; }
-.home .ic { background: #f3f4f2; color: #565d66; }
-.tag { margin-left: auto; font-size: 12px; color: #565d66; }
-.work { background: #e6ecf8; color: #3d63b8; }
-.project { background: #dff0f2; color: #0f7a86; }
-.health { background: #e2f1e8; color: #2f8a56; }
-.interest { background: #f8e7de; color: #c2562b; }
-.foot { border-top: 1px solid #dfe2de; margin-top: 4px; padding-top: 4px; }
-.foot a { color: #b3261e; font-size: 13px; }
+.home .ic { background: #f6f5fb; color: #5d6177; }
+.tag { margin-left: auto; font-size: 12px; color: #5d6177; }
+.work { background: #efe9ff; color: #8b6cf6; }
+.project { background: #e3eeff; color: #4e8bff; }
+.health { background: #e0f5ea; color: #2faf6b; }
+.interest { background: #fdeae2; color: #f07a4e; }
+.foot { border-top: 1px solid #ebe9f4; margin-top: 4px; padding-top: 4px; }
+.foot a { color: #c8344d; font-size: 13px; }
 @media (prefers-color-scheme: dark) {
-  .btn { background: #1a1e24; border-color: #2b3038; }
-  .btn[aria-expanded='true'], .btn:hover { border-color: #6f7782; }
-  .btn:focus-visible, a:focus-visible { outline-color: #4cc79d; }
-  .panel { background: #1a1e24; color: #eceef1; border-color: #2b3038; }
-  .head, .foot { border-color: #2b3038; }
-  .head, .tag, .home .ic { color: #a2a9b3; }
-  a:hover, a:focus-visible, .home .ic { background: #14171c; }
-  a.current { background: #262b33; }
-  .work { background: #232c40; color: #8fa9e6; }
-  .project { background: #1a3236; color: #6cc4cf; }
-  .health { background: #1b3326; color: #6fd6a2; }
-  .interest { background: #3d261c; color: #ffa684; }
+  .btn { background: #1f2038; border-color: #2e3050; }
+  .panel { background: #1f2038; color: #ecebfa; border-color: #2e3050; }
+  .head, .foot { border-color: #2e3050; }
+  .head, .tag, .home .ic { color: #a3a5c2; }
+  a:hover, a:focus-visible, .home .ic { background: #17182e; }
+  a.current { background: #2a2650; }
+  .work { background: #2d2652; color: #b39dff; }
+  .project { background: #1d2f55; color: #8fb6ff; }
+  .health { background: #183a2b; color: #6fd6a2; }
+  .interest { background: #43281f; color: #ffa684; }
   .ic { --px-ink: #a7b6bd; }
-  .foot a { color: #ff8a80; }
+  .foot a { color: #ff7d90; }
 }
 `;
 
@@ -109,9 +99,9 @@ function mountTesterBand() {
   Object.assign(band.style, {
     position: 'fixed', top: 'calc(6px + env(safe-area-inset-top))', left: '50%', transform: 'translateX(-50%)',
     zIndex: '2147483001', maxWidth: 'calc(100vw - 24px)', padding: '4px 12px', borderRadius: '999px',
-    background: '#f8e7de', color: '#9a3f1a', border: '1px solid #e9c4b1',
+    background: 'rgb(253 234 226 / .94)', color: '#b0441e', border: '1px solid #f6c9b6',
     font: "600 12px/1.4 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif",
-    textAlign: 'center', pointerEvents: 'none',
+    textAlign: 'center', pointerEvents: 'none', boxShadow: '0 6px 16px -10px rgb(176 68 30 / .6)',
   } satisfies Partial<CSSStyleDeclaration>);
   document.body.append(band);
 }
@@ -184,7 +174,6 @@ class AepSwitcher extends HTMLElement {
       const r = this.button.getBoundingClientRect();
       const below = r.top < window.innerHeight / 2;
       const right = r.left > window.innerWidth / 2;
-      this.panel.style.setProperty('--origin', `${below ? 'top' : 'bottom'} ${right ? 'right' : 'left'}`);
       Object.assign(this.panel.style, {
         top: below ? `${r.bottom + 8}px` : '',
         bottom: below ? '' : `${window.innerHeight - r.top + 8}px`,

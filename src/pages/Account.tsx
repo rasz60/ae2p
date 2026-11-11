@@ -1,7 +1,7 @@
 import type { User } from '@supabase/supabase-js';
 import { useCallback, useEffect, useRef, useState, type ReactElement } from 'react';
 import { Link } from 'react-router-dom';
-import { Brand } from '../components/Brand';
+import { Backdrop, Brand } from '../components/Brand';
 import { GOOGLE_ICON, KAKAO_ICON, NAVER_ENABLED, NAVER_ICON } from '../components/Social';
 import { UserMenu } from '../components/UserMenu';
 import { portalApi } from '../lib/api';
@@ -89,6 +89,7 @@ export function Account() {
 
   return (
     <div className="page">
+      <Backdrop />
       <header className="topbar">
         <Link to="/" aria-label="홈">
           <Brand kind="mark" height={30} />

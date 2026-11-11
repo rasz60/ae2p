@@ -52,7 +52,7 @@ export function UserMenu() {
   const email = user?.email ?? '';
   return (
     <div className="user-menu" ref={ref}>
-      <button className="avatar" onClick={() => setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={open} aria-label="계정 메뉴">
+      <button className="avatar" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label="계정 메뉴">
         {email.slice(0, 1).toUpperCase()}
       </button>
       {open && (

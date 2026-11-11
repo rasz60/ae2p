@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ClipboardEvent, type DragEvent, type FormEvent, type KeyboardEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { Brand } from '../components/Brand';
+import { Backdrop, Brand } from '../components/Brand';
 import { UserMenu } from '../components/UserMenu';
 import { builderApi, builderStream } from '../lib/api';
 
@@ -170,6 +170,7 @@ export function Builder() {
 
   return (
     <div className="page">
+      <Backdrop />
       <header className="topbar">
         <Link to="/" aria-label="홈">
           <Brand kind="mark" height={30} />

@@ -12,8 +12,8 @@ void SplashScreen.preventAutoHideAsync();
 
 // 포털 로딩 화면과 같은 바탕색 (스플래시 → 웹 첫 화면이 끊기지 않게)
 const COLORS = {
-  light: { bg: '#F3F4F2', text: '#171B21', muted: '#565D66', button: '#171B21', buttonText: '#FFFFFF' },
-  dark: { bg: '#111418', text: '#ECEEF1', muted: '#A2A9B3', button: '#ECEEF1', buttonText: '#111418' },
+  light: { bg: '#F6F5FB', text: '#1E1E28', muted: '#5F6378', button: '#1E1E28', buttonText: '#FFFFFF' },
+  dark: { bg: '#14152A', text: '#ECEBFA', muted: '#A4A6C2', button: '#ECEBFA', buttonText: '#14152A' },
 };
 
 /**
