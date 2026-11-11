@@ -12,16 +12,15 @@ mkdirSync(out, { recursive: true });
 
 // ── 색 (src/styles.css 의 라이트 테마와 같은 값) ──
 const C = {
-  bg: '#f6f5fb',
+  bg: '#f3f4f2',
   card: '#ffffff',
-  line: '#ebe9f4',
-  text: '#2e3142',
-  muted: '#5d6177',
-  link: '#5a4fe0',
-  btn: '#6a5ff0', // 그라데이션을 못 그리는 클라이언트용 단색
-  grad: 'linear-gradient(110deg, #3768e0 0%, #6a5ff0 50%, #9450e0 100%)',
+  line: '#dfe2de',
+  text: '#171b21',
+  muted: '#565d66',
+  link: '#07654a',
+  btn: '#0a7d5a', // 포인트 초록 한 색 (흰 글자 5.3:1)
   // 앱 축 색 (업무 · 프로젝트 · 건강 · 관심) — 한 계정으로 여러 앱을 쓴다는 표시
-  axes: ['#8b6cf6', '#4e8bff', '#2faf6b', '#f07a4e'],
+  axes: ['#3d63b8', '#0f7a86', '#2f8a56', '#c2562b'],
 };
 const FONT = "-apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', 'Malgun Gothic', sans-serif";
 
@@ -100,11 +99,11 @@ function layout(m) {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:440px;">
         <tr>
           <td align="center" style="padding-bottom:20px;">
-            <a href="{{ .SiteURL }}" style="text-decoration:none;"><img src="{{ .SiteURL }}/pwa-192x192.png" width="56" height="56" alt="ae:p" style="display:block;border:0;border-radius:16px;"></a>
+            <a href="{{ .SiteURL }}" style="text-decoration:none;"><img src="{{ .SiteURL }}/pwa-192x192.png" width="56" height="56" alt="ae:p" style="display:block;border:0;border-radius:12px;"></a>
           </td>
         </tr>
         <tr>
-          <td style="background:${C.card};border:1px solid ${C.line};border-radius:28px;padding:36px 32px 32px;">
+          <td style="background:${C.card};border:1px solid ${C.line};border-radius:16px;padding:36px 32px 32px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
               <tr>
                 <td style="padding-bottom:18px;">
@@ -121,8 +120,8 @@ function layout(m) {
                 <td style="padding-top:28px;">
                   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                     <tr>
-                      <td align="center" bgcolor="${C.btn}" style="background-color:${C.btn};background-image:${C.grad};border-radius:14px;">
-                        <a href="{{ .ConfirmationURL }}" target="_blank" style="display:block;padding:15px 18px;font-size:16px;line-height:18px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:14px;">${m.button}</a>
+                      <td align="center" bgcolor="${C.btn}" style="background-color:${C.btn};border-radius:10px;">
+                        <a href="{{ .ConfirmationURL }}" target="_blank" style="display:block;padding:15px 18px;font-size:16px;line-height:18px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:10px;">${m.button}</a>
                       </td>
                     </tr>
                   </table>

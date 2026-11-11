@@ -7,14 +7,3 @@ export function Brand({ kind, height }: { kind: 'wordmark' | 'mark'; height: num
     </picture>
   );
 }
-
-/** 바깥 배경의 흐릿한 원들 (브랜드 시안의 파스텔 배경) */
-export function Backdrop() {
-  return (
-    <div className="backdrop" aria-hidden>
-      <i className="blob blob-1" />
-      <i className="blob blob-2" />
-      <i className="blob blob-3" />
-    </div>
-  );
-}

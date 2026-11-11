@@ -1,6 +1,6 @@
 import { appLogo, TONE_LABEL, visibleApps, type PortalApp } from '../../shared/apps';
 import { isPlainClick, showLoader } from '../../shared/loader';
-import { Backdrop, Brand } from '../components/Brand';
+import { Brand } from '../components/Brand';
 import { UserMenu } from '../components/UserMenu';
 import { useAuth } from '../lib/auth';
 
@@ -14,7 +14,6 @@ export function Home() {
   const apps = visibleApps(user?.app_metadata);
   return (
     <div className="page">
-      <Backdrop />
       <header className="topbar">
         <Brand kind="mark" height={30} />
         <UserMenu />
@@ -22,7 +21,7 @@ export function Home() {
       <main className="home">
         <section className="hero">
           <p className="hero-date">{today()}</p>
-          {/* 괄호 속 글자(a · e)만 브랜드 그라데이션. 읽는 사람에게는 'take care.' */}
+          {/* 괄호 속 글자(a · e)만 포인트 색. 읽는 사람에게는 'take care.' */}
           <h1 aria-label="take care.">
             t<b>[A]</b>k<b>[E]</b> c<b>[A]</b>r<b>[E]</b>.
           </h1>

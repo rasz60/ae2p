@@ -60,9 +60,9 @@ const MONITOR = pixelSvg([
   '....kkk....',
   '..kkkkkkk..',
 ]);
-// 운동기록(work-doubt): 검은 원 + 흰 추세선 (앱의 TREND 차트)
+// 운동기록(work-doubt): 검은 바탕 + 흰 추세선 (모서리는 담는 칸이 깎는다) (앱의 TREND 차트)
 const TREND =
-  '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#0b0b0b"/>' +
+  '<svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#0b0b0b"/>' +
   '<polyline points="5.5,15.5 9.5,11.5 12.5,14 17,8.5 18.8,10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 // 커리어++(careerpad): 이력서 한 장 + '+' (앱의 주황 포인트색)
 const RESUME =
@@ -115,7 +115,7 @@ export const TONE_LABEL: Record<AppTone, string> = { work: 'Work', project: 'Pro
 export const iconSvg = (tone: AppTone) =>
   `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TONE_ICON[tone]}</svg>`;
 
-/** 동그라미 안에 넣을 앱 로고. 크기는 style 의 --logo 로 넘긴다 (CSS: .xxx svg { width: var(--logo) }) */
+/** 아이콘 칸 안에 넣을 앱 로고. 크기는 style 의 --logo 로 넘긴다 (CSS: .xxx svg { width: var(--logo) }) */
 export const appLogo = (app: PortalApp) => ({
   html: app.logo?.svg ?? iconSvg(app.tone),
   size: `${app.logo?.size ?? 46}%`,
