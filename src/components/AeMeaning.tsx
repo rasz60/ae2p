@@ -2,7 +2,7 @@
 export function AeMeaning() {
   return (
     <span className="ae-line">
-      t<b>ae</b>ke c<b>ae</b>re, twice. <em>두 번 챙기는 앱</em>
+      t<b>a</b>k<b>e</b> c<b>a</b>r<b>e</b>, twice. <em>두 번 챙기는 앱</em>
     </span>
   );
 }
