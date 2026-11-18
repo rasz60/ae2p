@@ -28,6 +28,20 @@ ae2p.duckdns.org {
 		file_server
 	}
 
+	# ── 마이데이 (daypad, pm2: day-api) ── Expo 웹은 baseUrl '/day' 로 빌드된다
+	redir /day /day/
+	handle_path /api/day/* {
+		reverse_proxy 127.0.0.1:8093
+	}
+	handle_path /day/* {
+		root * /home/ubuntu/daypad/app/dist
+		# 해시가 붙은 빌드 파일 말고는(HTML 등) 매번 서버에 확인 (바뀌지 않았으면 304)
+		@day_html not path /_expo/* /assets/*
+		header @day_html Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+
 	# ── 운동기록 (work-doubt, pm2: workout-api) ── Expo 웹은 baseUrl '/workout' 으로 빌드된다
 	redir /workout /workout/
 	handle_path /api/workout/* {
