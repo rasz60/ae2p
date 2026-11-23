@@ -46,6 +46,10 @@ eas login                  # https://expo.dev 계정
 eas init                   # Expo 프로젝트를 만들고 app.json 에 extra.eas.projectId 를 넣는다 → 커밋한다
 ```
 
+- Codespace · devcontainer 에서 `eas login` 을 하면 브라우저가 `localhost:<포트>/auth/callback?code=…` 에서 "연결할 수 없음"으로 끝난다
+  (콜백 서버는 컨테이너 안에 있다). 로그인을 **끄지 말고** 그 주소창 URL 을 복사해 새 터미널에서 `curl "<URL>"` 하면 로그인이 끝난다
+- 같은 이메일로 만든 Expo 계정이 구글 연동이 아니면 구글 버튼이 막힌다. 이메일 · 비밀번호로 로그인하거나 비밀번호를 재설정한다
+
 **4. 빌드 + TestFlight 올리기** (Mac 없이 Expo 클라우드가 빌드한다, 20분쯤)
 
 ```powershell
@@ -56,6 +60,9 @@ npm run build:testflight   # = eas build -p ios --profile production --auto-subm
   **HealthKit capability** · App Store Connect 의 앱을 알아서 만든다 (질문은 모두 기본값 Yes)
 - 앱 이름 **"ae:p" 가 App Store 에 이미 있으면** 앱 만들기가 실패한다. 그때는 `app.json` 의 `name` 을 `ae:p takecare` 처럼 바꾸고 다시 실행
 - 수출 규정(암호화) 질문은 `ITSAppUsesNonExemptEncryption: false` 로 이미 답해 두었다
+- **Apple 개발자 멤버십이 만료**됐으면 번들 ID 등록이 거부된다(`Developer Program Membership Expired`). 갱신 결제 직후에는 반영에 시간이 걸리니 Membership 이 Active 가 된 뒤 다시 실행한다. App Store Connect 의 계약 동의 · EU 트레이더 상태도 함께 확인한다
+- 같은 팀에 예전 앱의 **배포 인증서**가 있다는 질문(`Reuse this distribution certificate?`)에는 Y. 인증서는 앱이 아니라 팀 단위다
+- 업로드가 성공해도 Apple 처리에서 거부될 수 있다(메일로 온다). 읽기 전용이어도 `NSHealthUpdateUsageDescription` 문구가 없으면 `ITMS-90683` 으로 거부되므로 `app.json` 에 문구를 둔다(`false` 로 끄지 않는다). `ITMS-90725`(iOS SDK 버전)는 2027년 4월 이전에는 경고일 뿐이다
 
 **5. 내 아이폰에 설치**
 
@@ -86,6 +93,7 @@ npm run build:testflight   # = eas build -p ios --profile production --auto-subm
 - **커리어++ 의 'PDF로 저장'** (`window.print()`)은 앱 안 WebView 에서 동작하지 않는다. PDF 가 필요하면 사파리에서 연다
 - **푸시 알림**은 아직 없다. 포털의 웹 푸시는 앱 안 WebView 에서 오지 않는다 (iOS 제약).
   앱 푸시를 하려면 앱에서 Expo 푸시 토큰을 받아 포털 서버가 APNs 로 보내도록 바꿔야 한다
+- **앱에서 Google 로그인이 간혹 실패**할 수 있다(Supabase 로그에 `/callback` 400 `OAuth state not found or expired`). 한 번은 원인을 못 찾은 채 다시 시도하자 됐다. 반복되면 앱을 완전히 종료한 뒤 한 번만 시도하고, Supabase Auth 로그의 `Login` 이벤트가 몇 번 찍히는지 확인한다
 - **초대 · 비밀번호 재설정 메일 링크**는 사파리로 열린다. 거기서 비밀번호를 정한 뒤 앱에서 로그인한다
 - 운동기록 저장소의 **운동기록 단독 iPhone 앱**(`com.devsixt.workout`, work-doubt `docs/APP.md`)은 이제 필요 없다.
   ae:p 앱 안의 운동기록이 같은 Apple 건강 연동을 한다. 둘 다 설치해도 같은 운동은 서버가 한 번만 저장한다
