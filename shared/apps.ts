@@ -116,9 +116,9 @@ const CAMPFIRE = pixelSvg([
 ], '#e8542a');
 
 export const APPS: PortalApp[] = [
-  // 마이데이(P-0005): 첫 번째 메뉴. 서버 배포를 확인하기 전까지는 '준비 중'(ready: false)으로 둔다
+  // 마이데이(P-0005): 첫 번째 메뉴
   {
-    id: 'day', name: '마이데이', desc: '일기 · 캘린더 · 일정 공유', path: '/day/', tone: 'work', ready: false,
+    id: 'day', name: '마이데이', desc: '일기 · 캘린더 · 일정 공유', path: '/day/', tone: 'work', ready: true,
     logo: { svg: CAMPFIRE, size: 100 },
   },
   {

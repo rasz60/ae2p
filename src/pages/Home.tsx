@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type PointerEvent } from 'react';
-import { appLogo, visibleApps, type PortalApp } from '../../shared/apps';
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
+import { APPS, appLogo, visibleApps, type PortalApp } from '../../shared/apps';
 import { isPlainClick, showLoader } from '../../shared/loader';
 import { AeMeaning } from '../components/AeMeaning';
 import { Brand } from '../components/Brand';
@@ -11,7 +11,7 @@ const today = () => new Date().toLocaleDateString('ko-KR', { month: 'numeric', d
 
 const TAG: Record<PortalApp['tone'], string> = { work: 'WORK', project: 'PROJ', health: 'HEALTH', interest: 'CAREER' };
 
-/** 앱 런처: 자판기. 칸을 누르면 그 앱이 나오고, 아래 번호 버튼은 1~4 키로도 눌린다 */
+/** 앱 런처: 자판기. 칸을 누르면 그 앱이 나오고, 아래 번호 버튼(메뉴 개수만큼)은 숫자 키로도 눌린다 */
 export function Home() {
   const { user, isTester } = useAuth();
   // 에이전트는 관리자와 공유받은 멤버에게만 보인다 (P-0004)
@@ -78,8 +78,8 @@ export function Home() {
               ))}
             </ul>
           </div>
-          <ol className="btns" aria-label="번호로 고르기 (키보드 1~4)">
-            {[0, 1, 2, 3].map((i) => {
+          <ol className="btns" style={{ '--n': APPS.length } as CSSProperties} aria-label={`번호로 고르기 (키보드 1~${APPS.length})`}>
+            {Array.from({ length: APPS.length }, (_, i) => {
               const app = apps[i];
               const on = i === lit && !!app;
               return (

@@ -26,7 +26,10 @@
           "image": "./assets/splash.png",
           "imageWidth": 200,
           "backgroundColor": "#D5E0DC",
-          "dark": { "image": "./assets/splash.png", "backgroundColor": "#131C25" }
+          "dark": {
+            "image": "./assets/splash.png",
+            "backgroundColor": "#131C25"
+          }
         }
       ],
       "expo-web-browser",
@@ -38,6 +41,12 @@
           "background": false
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6ccb45f2-46f7-471a-a9b3-0718d1999a74"
+      }
+    },
+    "owner": "devsixt"
   }
 }

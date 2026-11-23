@@ -236,7 +236,7 @@ input[type='checkbox'] { height: auto; accent-color: var(--edge); }
 @media (hover: hover) and (pointer: fine) { a.slot:hover { transform: translateY(-2px); } }
 a.slot:active { transform: translateY(2px); }
 /* 번호 버튼: 칸과 짝. 올리거나 포커스하면 해당 칸이 켜지고, 누르면 칸이 눌린다 */
-.btns { margin: 18px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.btns { margin: 18px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(var(--n, 5), 1fr); gap: 8px; }
 .btns li { display: block; }
 .btn-no {
   position: relative; display: grid; place-items: center; width: 100%; min-height: 44px;
