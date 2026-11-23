@@ -37,7 +37,7 @@
         "@kingstinct/react-native-healthkit",
         {
           "NSHealthShareUsageDescription": "Apple Watch · 건강 앱에 기록된 운동(종류 · 시간 · 거리 · 칼로리 · 심박)을 읽어 운동기록에 자동으로 남깁니다.",
-          "NSHealthUpdateUsageDescription": false,
+          "NSHealthUpdateUsageDescription": "ae:p는 건강 앱에 데이터를 기록하지 않고 읽기만 합니다. 건강 앱 연동 구성요소가 요구하는 안내 문구입니다.",
           "background": false
         }
       ]
